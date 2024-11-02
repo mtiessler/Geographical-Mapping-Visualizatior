@@ -1,3 +1,0 @@
-# Motivation
-
-I have diverse
