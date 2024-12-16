@@ -3,7 +3,7 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   build-and-push:
@@ -20,8 +20,8 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/react-app:latest .
-          docker push ${{ secrets.DOCKER_USERNAME }}/react-app:latest
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/iv-assignment-2:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/iv-assignment-2:latest
 
   deploy:
     runs-on: ubuntu-latest
@@ -31,7 +31,7 @@ jobs:
         uses: aws-actions/aws-amplify-deploy@v1
         with:
           app-id: ${{ secrets.AWS_AMPLIFY_APP_ID }}
-          branch: main
+          branch: master
           region: ${{ secrets.AWS_REGION }}
           access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
