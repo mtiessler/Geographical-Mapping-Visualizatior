@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import * as d3 from 'd3'
 
-const View1: React.FC = () => {
+const GeoView1: React.FC = () => {
     useEffect(() => {
         const svg = d3.select('#geo-view1')
             .append('svg')
@@ -25,4 +25,4 @@ const View1: React.FC = () => {
     );
 };
 
-export default View1;
+export default GeoView1;

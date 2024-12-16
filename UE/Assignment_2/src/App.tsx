@@ -1,10 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Menu from './components/Menu';
-import View1 from './components/View1';
-import View2 from './components/View2';
-import View3 from './components/View3';
-import View4 from './components/View4';
+import GeoView1 from './components/GeoView1';
+import GeoView2 from './components/GeoView2';
+import GeoView3 from './components/GeoView3';
+import GraphView from './components/GraphView';
 import './styles/app.scss';
 
 function App() {
@@ -12,10 +12,10 @@ function App() {
         <Router>
             <Routes>
                 <Route path="/" element={<Menu />} />
-                <Route path="/view-1" element={<View1 />} />
-                <Route path="/view-2" element={<View2 />} />
-                <Route path="/view-3" element={<View3 />} />
-                <Route path="/view-4" element={<View4 />} />
+                <Route path="/geo-1" element={<GeoView1 />} />
+                <Route path="/geo-2" element={<GeoView2 />} />
+                <Route path="/geo-3" element={<GeoView3 />} />
+                <Route path="/graph" element={<GraphView />} />
             </Routes>
         </Router>
     );

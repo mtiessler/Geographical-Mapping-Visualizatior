@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import * as d3 from 'd3';
 
-const View4: React.FC = () => {
+const GraphView: React.FC = () => {
     useEffect(() => {
         const data = [10, 20, 30, 40, 50];
 
@@ -39,4 +39,4 @@ const View4: React.FC = () => {
     );
 };
 
-export default View4;
+export default GraphView;
