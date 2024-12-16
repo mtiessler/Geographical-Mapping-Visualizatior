@@ -5,7 +5,7 @@ import View1 from './components/View1';
 import View2 from './components/View2';
 import View3 from './components/View3';
 import View4 from './components/View4';
-import './App.scss';
+import './styles/app.scss';
 
 function App() {
     return (
