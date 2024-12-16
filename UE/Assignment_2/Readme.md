@@ -102,10 +102,10 @@ react-app/
 ├── src/                  # Source code
 │   ├── components/       # React components
 │   │   ├── Menu.tsx
-│   │   ├── View1.tsx
-│   │   ├── View2.tsx
-│   │   ├── View3.tsx
-│   │   └── View4.tsx
+│   │   ├── GeoView1.tsx
+│   │   ├── GeoView2.tsx
+│   │   ├── GeoView3.tsx
+│   │   └── GraphView.tsx
 │   │
 │   ├── data/             # Data files (e.g., CSV)
 │   ├── styles/           # SCSS stylesheets
