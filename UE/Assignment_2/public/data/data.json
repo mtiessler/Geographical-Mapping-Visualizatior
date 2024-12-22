@@ -1,0 +1,79 @@
+{
+  "AUT": {
+    "country_name": "Austria",
+    "data": [
+      { "e_startdate": 1904, "num_exhibitions": 2 },
+      { "e_startdate": 1905, "num_exhibitions": 294 },
+      { "e_startdate": 1906, "num_exhibitions": 488 },
+      { "e_startdate": 1907, "num_exhibitions": 349 },
+      { "e_startdate": 1908, "num_exhibitions": 605 },
+      { "e_startdate": 1909, "num_exhibitions": 510 },
+      { "e_startdate": 1910, "num_exhibitions": 856 },
+      { "e_startdate": 1911, "num_exhibitions": 336 },
+      { "e_startdate": 1912, "num_exhibitions": 390 },
+      { "e_startdate": 1913, "num_exhibitions": 473 },
+      { "e_startdate": 1914, "num_exhibitions": 316 },
+      { "e_startdate": 1915, "num_exhibitions": 152 }
+    ]
+  },
+  "BEL": {
+    "country_name": "Belgium",
+    "data": [
+      { "e_startdate": 1905, "num_exhibitions": 156 },
+      { "e_startdate": 1906, "num_exhibitions": 54 },
+      { "e_startdate": 1907, "num_exhibitions": 160 },
+      { "e_startdate": 1908, "num_exhibitions": 631 },
+      { "e_startdate": 1909, "num_exhibitions": 218 },
+      { "e_startdate": 1910, "num_exhibitions": 174 },
+      { "e_startdate": 1911, "num_exhibitions": 146 },
+      { "e_startdate": 1912, "num_exhibitions": 146 },
+      { "e_startdate": 1913, "num_exhibitions": 914 },
+      { "e_startdate": 1914, "num_exhibitions": 1016 }
+    ]
+  },
+  "CHE": {
+    "country_name": "Switzerland",
+    "data": [
+      { "e_startdate": 1906, "num_exhibitions": 202 },
+      { "e_startdate": 1908, "num_exhibitions": 110 },
+      { "e_startdate": 1909, "num_exhibitions": 15 },
+      { "e_startdate": 1911, "num_exhibitions": 129 },
+      { "e_startdate": 1912, "num_exhibitions": 44 },
+      { "e_startdate": 1913, "num_exhibitions": 7 }
+    ]
+  },
+  "CZE": {
+    "country_name": "Czech Republic",
+    "data": [
+      { "e_startdate": 1905, "num_exhibitions": 226 },
+      { "e_startdate": 1906, "num_exhibitions": 82 },
+      { "e_startdate": 1907, "num_exhibitions": 152 },
+      { "e_startdate": 1908, "num_exhibitions": 158 },
+      { "e_startdate": 1909, "num_exhibitions": 184 },
+      { "e_startdate": 1910, "num_exhibitions": 245 },
+      { "e_startdate": 1911, "num_exhibitions": 83 },
+      { "e_startdate": 1912, "num_exhibitions": 516 },
+      { "e_startdate": 1913, "num_exhibitions": 385 },
+      { "e_startdate": 1914, "num_exhibitions": 248 }
+    ]
+  },
+  "DEU": {
+    "country_name": "Germany",
+    "data": [
+      { "e_startdate": 1902, "num_exhibitions": 3 },
+      { "e_startdate": 1903, "num_exhibitions": 4 },
+      { "e_startdate": 1904, "num_exhibitions": 9 },
+      { "e_startdate": 1905, "num_exhibitions": 4183 },
+      { "e_startdate": 1906, "num_exhibitions": 2561 },
+      { "e_startdate": 1907, "num_exhibitions": 1440 },
+      { "e_startdate": 1908, "num_exhibitions": 1390 },
+      { "e_startdate": 1909, "num_exhibitions": 1179 },
+      { "e_startdate": 1910, "num_exhibitions": 1717 },
+      { "e_startdate": 1911, "num_exhibitions": 1487 },
+      { "e_startdate": 1912, "num_exhibitions": 2142 },
+      { "e_startdate": 1913, "num_exhibitions": 2606 },
+      { "e_startdate": 1914, "num_exhibitions": 1350 },
+      { "e_startdate": 1915, "num_exhibitions": 458 }
+    ]
+  }
+}
