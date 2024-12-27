@@ -8,9 +8,22 @@ const nameToIsoA3Map: Record<string, string> = {
     Germany: 'DEU',
     Austria: 'AUT',
     Belgium: 'BEL',
-    'Czech Republic': 'CZE',
+    'Czechia': 'CZE',
     Switzerland: 'CHE',
-    // Add more mappings as needed
+    'United States of America': 'USA',
+    Ukraine: 'UKR',
+    Australia: 'AUS',
+    Spain: 'ESP',
+    France: 'FRA',
+    Hungary: 'HUN',
+    Italy: 'ITA',
+    Japan: 'JPN',
+    Lithuania: 'LTU',
+    Netherlands: 'NLD',
+    Poland: 'POL',
+    Russia: 'RUS',
+    Sweden: 'SWE',
+    Unknown: 'Unknown',
 };
 
 const GeoView1 = () => {
@@ -22,7 +35,9 @@ const GeoView1 = () => {
     // Fetch world map data
     const fetchWorldMap = async () => {
         try {
-            const response = await fetch('https://unpkg.com/world-atlas@2.0.2/countries-110m.json');
+            const response = await fetch(
+                'https://unpkg.com/world-atlas@2.0.2/countries-110m.json'
+            );
             if (!response.ok) throw new Error('Failed to fetch world map');
             const mapData = await response.json();
             return mapData;
@@ -35,7 +50,7 @@ const GeoView1 = () => {
     // Fetch exhibition data
     const fetchData = async () => {
         try {
-            const response = await fetch('/data/data.json'); // Ensure this path is correct
+            const response = await fetch('/data/1_geographic_timeline.json');
             if (!response.ok) throw new Error('Failed to fetch 1_geographic_timeline.json');
             const exhibitionData = await response.json();
             return exhibitionData;
@@ -75,7 +90,8 @@ const GeoView1 = () => {
         const pathGenerator = d3.geoPath().projection(projection);
 
         // Heatmap color scale
-        const colorScale = d3.scaleSequentialLog(d3.interpolateReds)
+        const colorScale = d3
+            .scaleSequentialLog(d3.interpolateReds)
             .domain([1, 5000]); // Adjust domain based on data range
 
         // Add paths for countries
@@ -86,9 +102,8 @@ const GeoView1 = () => {
             .append('path')
             .attr('d', pathGenerator as any)
             .attr('fill', (d: any) => {
-                // Use iso_a3 if available, otherwise map `name` to iso_a3
-                const countryCode =
-                    d.properties?.iso_a3 || nameToIsoA3Map[d.properties?.name];
+                const countryCode = d.properties?.iso_a3 || nameToIsoA3Map[d.properties?.name];
+                console.log(countryCode)
                 if (!countryCode) {
                     console.warn('No suitable property for feature:', d);
                     return '#ccc'; // Default color for missing data
