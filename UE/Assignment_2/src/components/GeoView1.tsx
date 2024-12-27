@@ -264,6 +264,19 @@ const GeoView1 = () => {
                 <svg ref={svgRef} width={900} height={500} style={{ border: '1px solid #ccc' }}></svg>
                 <svg ref={legendRef} width={100} height={350} style={{ marginLeft: '10px' }}></svg>
             </div>
+            <div
+                ref={tooltipRef}
+                style={{
+                    position: 'absolute',
+                    visibility: 'hidden',
+                    background: '#fff',
+                    padding: '5px',
+                    border: '1px solid #ccc',
+                    borderRadius: '4px',
+                    pointerEvents: 'none',
+                    zIndex: 10,
+                }}
+            ></div>
             <div style={{ display: 'flex', justifyContent: 'space-around', width: '100%', marginTop: '20px' }}>
                 <div>
                     <input
