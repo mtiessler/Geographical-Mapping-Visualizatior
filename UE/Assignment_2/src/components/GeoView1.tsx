@@ -3,7 +3,6 @@ import * as d3 from 'd3';
 import * as topojson from 'topojson-client';
 import { FeatureCollection, Geometry } from 'geojson';
 
-// Mapping from GeoJSON `name` to `iso_a3` for missing `iso_a3` values
 const nameToIsoA3Map: Record<string, string> = {
     Germany: 'DEU',
     Austria: 'AUT',
@@ -26,9 +25,15 @@ const nameToIsoA3Map: Record<string, string> = {
     Unknown: 'Unknown',
 };
 
+const importantDates = [
+    { year: 1912, description: 'Titanic Sinks' },
+    { year: 1914, description: 'Start of WWI' },
+];
+
 const GeoView1 = () => {
     const svgRef = useRef<SVGSVGElement | null>(null);
     const legendRef = useRef<SVGSVGElement | null>(null);
+    const tooltipRef = useRef<HTMLDivElement | null>(null);
     const [year, setYear] = useState<number>(1905);
     const [minExhibitions, setMinExhibitions] = useState<number>(1);
     const [worldMap, setWorldMap] = useState<any>(null);
@@ -41,8 +46,7 @@ const GeoView1 = () => {
                 'https://unpkg.com/world-atlas@2.0.2/countries-110m.json'
             );
             if (!response.ok) throw new Error('Failed to fetch world map');
-            const mapData = await response.json();
-            return mapData;
+            return await response.json();
         } catch (error) {
             console.error('Error fetching world map:', error);
             return null;
@@ -52,7 +56,7 @@ const GeoView1 = () => {
     const fetchData = async () => {
         try {
             const response = await fetch('/data/1_geographic_timeline.json');
-            if (!response.ok) throw new Error('Failed to fetch 1_geographic_timeline.json');
+            if (!response.ok) throw new Error('Failed to fetch data');
             const exhibitionData = await response.json();
 
             const maxExhibitions = Math.max(
@@ -64,7 +68,7 @@ const GeoView1 = () => {
 
             return exhibitionData;
         } catch (error) {
-            console.error('Error fetching 1_geographic_timeline.json:', error);
+            console.error('Error fetching data:', error);
             return null;
         }
     };
@@ -92,11 +96,23 @@ const GeoView1 = () => {
             .filter((entry) => entry.numExhibitions >= minExhibitions);
     };
 
-    useEffect(() => {
-        if (!worldMap || !data) return;
+    const exportData = () => {
+        const blob = new Blob([JSON.stringify(summaryData(), null, 2)], {
+            type: 'application/json',
+        });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'exhibitions_data.json';
+        link.click();
+    };
 
-        const svg = d3.select(svgRef.current);
+    useEffect(() => {
+        if (!worldMap || !data || !svgRef.current) return;
+
+        const svg = d3.select(svgRef.current as SVGSVGElement);
         svg.selectAll('*').remove();
+
+        const tooltip = d3.select(tooltipRef.current);
 
         const width = 900;
         const height = 500;
@@ -113,8 +129,18 @@ const GeoView1 = () => {
             .scaleSequentialLog(d3.interpolateReds)
             .domain([1, maxExhibitions]);
 
-        svg.append('g')
-            .selectAll('path')
+        const zoom = d3.zoom<SVGSVGElement, unknown>()
+            .scaleExtent([1, 8])
+            .translateExtent([[0, 0], [width, height]])
+            .on('zoom', (event) => {
+                svg.select('g').attr('transform', event.transform);
+            });
+
+        svg.call(zoom);
+
+        const g = svg.append('g');
+
+        g.selectAll('path')
             .data(geoJSON.features)
             .enter()
             .append('path')
@@ -130,7 +156,29 @@ const GeoView1 = () => {
                 const numExhibitions = yearData?.num_exhibitions || 0;
                 return numExhibitions >= minExhibitions ? colorScale(numExhibitions) : '#ccc';
             })
-            .attr('stroke', '#ffffff');
+            .attr('stroke', '#ffffff')
+            .on('mouseover', (event, d: any) => {
+                const countryName = d.properties?.name || 'Unknown';
+                const countryCode = d.properties?.iso_a3 || nameToIsoA3Map[d.properties?.name];
+                const countryData = data[countryCode];
+                const yearData = countryData?.data.find(
+                    (entry: any) => entry.e_startdate === year
+                );
+                const numExhibitions = yearData?.num_exhibitions || 0;
+
+                tooltip.style('visibility', 'visible')
+                    .html(`
+                        <strong>${countryName}</strong><br>
+                        Exhibitions: ${numExhibitions}
+                    `);
+            })
+            .on('mousemove', (event) => {
+                tooltip.style('top', `${event.pageY + 10}px`)
+                    .style('left', `${event.pageX + 10}px`);
+            })
+            .on('mouseout', () => {
+                tooltip.style('visibility', 'hidden');
+            });
 
         const legend = d3.select(legendRef.current);
         legend.selectAll('*').remove();
@@ -193,20 +241,8 @@ const GeoView1 = () => {
             .text('Number of Exhibitions');
     }, [worldMap, data, year, minExhibitions, maxExhibitions]);
 
-    const tableData = summaryData();
-
-    const exportData = () => {
-        const blob = new Blob([JSON.stringify(tableData, null, 2)], {
-            type: 'application/json',
-        });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = 'exhibitions_data.json';
-        link.click();
-    };
-
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>
+        <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <button
                 style={{
                     alignSelf: 'flex-start',
@@ -221,10 +257,11 @@ const GeoView1 = () => {
             </button>
             <h1>Geographical Heatmap of Exhibitions</h1>
             <p style={{ maxWidth: '600px', textAlign: 'center', margin: '10px 0' }}>
-                This map visualizes the number of exhibitions held in various countries between 1902 and 1915. Use the sliders below to explore the data for different years and set the minimum number of exhibitions required to display a country.
+                This map visualizes the number of exhibitions held in various countries between 1902 and 1915.
+                You are currently viewing data for <strong>{year}</strong>. Use the sliders below to explore the data for different years and set the minimum number of exhibitions required to display a country.
             </p>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <svg ref={svgRef} width={900} height={500}></svg>
+                <svg ref={svgRef} width={900} height={500} style={{ border: '1px solid #ccc' }}></svg>
                 <svg ref={legendRef} width={100} height={350} style={{ marginLeft: '10px' }}></svg>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-around', width: '100%', marginTop: '20px' }}>
@@ -251,6 +288,14 @@ const GeoView1 = () => {
                     <p>Minimum Exhibitions: {minExhibitions}</p>
                 </div>
             </div>
+            <div style={{ marginTop: '20px', textAlign: 'center' }}>
+                <p><strong>Important Dates</strong></p>
+                {importantDates.map((date, index) => (
+                    <p key={index} style={{ margin: '5px 0' }}>
+                        {date.year}: {date.description}
+                    </p>
+                ))}
+            </div>
             <table style={{ marginTop: '20px', borderCollapse: 'collapse', width: '80%', textAlign: 'left' }}>
                 <thead>
                 <tr style={{ backgroundColor: '#f2f2f2' }}>
@@ -259,7 +304,7 @@ const GeoView1 = () => {
                 </tr>
                 </thead>
                 <tbody>
-                {tableData.map((entry, index) => (
+                {summaryData().map((entry, index) => (
                     <tr key={index}>
                         <td style={{ padding: '10px', border: '1px solid #ddd' }}>{entry.country}</td>
                         <td style={{ padding: '10px', border: '1px solid #ddd' }}>{entry.numExhibitions}</td>
