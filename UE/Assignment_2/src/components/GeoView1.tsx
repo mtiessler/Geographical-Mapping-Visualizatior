@@ -8,7 +8,7 @@ const nameToIsoA3Map: Record<string, string> = {
     Germany: 'DEU',
     Austria: 'AUT',
     Belgium: 'BEL',
-    'Czechia': 'CZE',
+    Czechia: 'CZE',
     Switzerland: 'CHE',
     'United States of America': 'USA',
     Ukraine: 'UKR',
@@ -28,6 +28,7 @@ const nameToIsoA3Map: Record<string, string> = {
 
 const GeoView1 = () => {
     const svgRef = useRef<SVGSVGElement | null>(null);
+    const legendRef = useRef<SVGSVGElement | null>(null);
     const [year, setYear] = useState<number>(1905);
     const [worldMap, setWorldMap] = useState<any>(null);
     const [data, setData] = useState<Record<string, any> | null>(null);
@@ -84,8 +85,6 @@ const GeoView1 = () => {
             worldMap.objects.countries
         ) as unknown as FeatureCollection<Geometry>;
 
-        console.log('GeoJSON:', geoJSON);
-
         const projection = d3.geoMercator().fitSize([width, height], geoJSON);
         const pathGenerator = d3.geoPath().projection(projection);
 
@@ -103,63 +102,67 @@ const GeoView1 = () => {
             .attr('d', pathGenerator as any)
             .attr('fill', (d: any) => {
                 const countryCode = d.properties?.iso_a3 || nameToIsoA3Map[d.properties?.name];
-                console.log(countryCode)
-                if (!countryCode) {
-                    console.warn('No suitable property for feature:', d);
-                    return '#ccc'; // Default color for missing data
-                }
+                if (!countryCode) return '#ccc'; // Default color for missing data
                 const countryData = data[countryCode];
-                if (!countryData) {
-                    console.warn(`No data found for country code: ${countryCode}`);
-                    return '#ccc'; // Default color for missing data
-                }
+                if (!countryData) return '#ccc'; // Default color for missing data
                 const yearData = countryData.data.find(
                     (entry: any) => entry.e_startdate === year
                 );
                 const numExhibitions = yearData?.num_exhibitions || 0;
                 return numExhibitions > 0 ? colorScale(numExhibitions) : '#ccc';
             })
-            .attr('stroke', '#ffffff')
-            .on('mouseover', function (event, d: any) {
-                const countryCode =
-                    d.properties?.iso_a3 || nameToIsoA3Map[d.properties?.name];
-                const countryData = data[countryCode];
-                const yearData = countryData?.data.find(
-                    (entry: any) => entry.e_startdate === year
-                );
-                const numExhibitions = yearData?.num_exhibitions || 0;
-                const countryName = countryData?.country_name || d.properties?.name || 'Unknown';
+            .attr('stroke', '#ffffff');
 
-                d3.select(this).attr('stroke-width', 2).attr('stroke', '#000');
+        // Add color scale legend
+        const legend = d3.select(legendRef.current);
+        legend.selectAll('*').remove(); // Clear previous elements
 
-                const tooltip = d3.select('#tooltip');
-                tooltip
-                    .style('opacity', 1)
-                    .html(
-                        `<strong>${countryName}</strong>: ${numExhibitions} exhibitions in ${year}`
-                    )
-                    .style('left', `${event.pageX + 5}px`)
-                    .style('top', `${event.pageY - 28}px`);
-            })
-            .on('mouseout', function () {
-                d3.select(this).attr('stroke-width', 1).attr('stroke', '#ffffff');
-                d3.select('#tooltip').style('opacity', 0);
-            });
+        const legendHeight = 300;
+        const legendWidth = 20;
 
-        // Add tooltip if not already present
-        if (d3.select('#tooltip').empty()) {
-            d3.select('body')
-                .append('div')
-                .attr('id', 'tooltip')
-                .style('position', 'absolute')
-                .style('opacity', 0)
-                .style('background', 'lightsteelblue')
-                .style('border', '1px solid #aaa')
-                .style('border-radius', '5px')
-                .style('pointer-events', 'none')
-                .style('padding', '5px')
-                .style('font-size', '12px');
-        }
+        const legendScale = d3
+            .scaleLog()
+            .domain(colorScale.domain())
+            .range([legendHeight, 0]);
+
+        const legendAxis = d3
+            .axisRight(legendScale)
+            .ticks(5, '~s') // Adjust tick formatting and number
+            .tickSize(6);
+
+        const gradient = legend
+            .append('defs')
+            .append('linearGradient')
+            .attr('id', 'legend-gradient')
+            .attr('x1', '0%')
+            .attr('x2', '0%')
+            .attr('y1', '100%')
+            .attr('y2', '0%');
+
+        const gradientStops = d3
+            .range(0, 1.1, 0.1)
+            .map((t) => ({ t, color: colorScale(colorScale.domain()[0] * (colorScale.domain()[1] / colorScale.domain()[0]) ** t) }));
+
+        gradient
+            .selectAll('stop')
+            .data(gradientStops)
+            .enter()
+            .append('stop')
+            .attr('offset', (d) => `${d.t * 100}%`)
+            .attr('stop-color', (d) => d.color);
+
+        legend
+            .append('rect')
+            .attr('width', legendWidth)
+            .attr('height', legendHeight)
+            .style('fill', 'url(#legend-gradient)')
+            .attr('x', 0)
+            .attr('y', 0);
+
+        legend
+            .append('g')
+            .attr('transform', `translate(${legendWidth}, 0)`)
+            .call(legendAxis);
     }, [worldMap, data, year]);
 
     if (!worldMap || !data) return <p>Loading data...</p>;
@@ -167,7 +170,10 @@ const GeoView1 = () => {
     return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <h1>Geographical Heatmap of Exhibitions</h1>
-            <svg ref={svgRef} width={1000} height={500}></svg>
+            <div style={{ display: 'flex' }}>
+                <svg ref={svgRef} width={900} height={500}></svg>
+                <svg ref={legendRef} width={100} height={300} style={{ marginLeft: '10px' }}></svg>
+            </div>
             <input
                 type="range"
                 min="1902"
