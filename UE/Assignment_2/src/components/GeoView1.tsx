@@ -168,9 +168,24 @@ const GeoView1 = () => {
     if (!worldMap || !data) return <p>Loading data...</p>;
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>
+            <button
+                style={{
+                    alignSelf: 'flex-start',
+                    marginBottom: '10px',
+                    padding: '10px 20px',
+                    fontSize: '14px',
+                    cursor: 'pointer',
+                }}
+                onClick={() => window.history.back()}
+            >
+                Go Back
+            </button>
             <h1>Geographical Heatmap of Exhibitions</h1>
-            <div style={{ display: 'flex' }}>
+            <p style={{ maxWidth: '600px', textAlign: 'center', margin: '10px 0' }}>
+                This map visualizes the number of exhibitions held in various countries between 1902 and 1915. Use the slider below to explore the data for different years. The color scale on the right indicates the number of exhibitions, with darker shades representing higher counts.
+            </p>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <svg ref={svgRef} width={900} height={500}></svg>
                 <svg ref={legendRef} width={100} height={300} style={{ marginLeft: '10px' }}></svg>
             </div>
@@ -180,6 +195,7 @@ const GeoView1 = () => {
                 max="1915"
                 value={year}
                 onChange={(e) => setYear(parseInt(e.target.value, 10))}
+                style={{ width: '50%', marginTop: '10px' }}
             />
             <p>Year: {year}</p>
         </div>
