@@ -30,10 +30,11 @@ const GeoView1 = () => {
     const svgRef = useRef<SVGSVGElement | null>(null);
     const legendRef = useRef<SVGSVGElement | null>(null);
     const [year, setYear] = useState<number>(1905);
+    const [minExhibitions, setMinExhibitions] = useState<number>(1);
     const [worldMap, setWorldMap] = useState<any>(null);
     const [data, setData] = useState<Record<string, any> | null>(null);
+    const [maxExhibitions, setMaxExhibitions] = useState<number>(5000);
 
-    // Fetch world map data
     const fetchWorldMap = async () => {
         try {
             const response = await fetch(
@@ -48,12 +49,19 @@ const GeoView1 = () => {
         }
     };
 
-    // Fetch exhibition data
     const fetchData = async () => {
         try {
             const response = await fetch('/data/1_geographic_timeline.json');
             if (!response.ok) throw new Error('Failed to fetch 1_geographic_timeline.json');
             const exhibitionData = await response.json();
+
+            const maxExhibitions = Math.max(
+                ...Object.values(exhibitionData).flatMap((d: any) =>
+                    d.data.map((entry: any) => entry.num_exhibitions)
+                )
+            );
+            setMaxExhibitions(maxExhibitions);
+
             return exhibitionData;
         } catch (error) {
             console.error('Error fetching 1_geographic_timeline.json:', error);
@@ -71,11 +79,24 @@ const GeoView1 = () => {
         loadData();
     }, []);
 
+    const summaryData = () => {
+        if (!data) return [];
+        return Object.entries(data)
+            .map(([key, value]: [string, any]) => {
+                const yearData = value.data.find((entry: any) => entry.e_startdate === year);
+                return {
+                    country: value.country_name,
+                    numExhibitions: yearData?.num_exhibitions || 0,
+                };
+            })
+            .filter((entry) => entry.numExhibitions >= minExhibitions);
+    };
+
     useEffect(() => {
         if (!worldMap || !data) return;
 
         const svg = d3.select(svgRef.current);
-        svg.selectAll('*').remove(); // Clear previous elements
+        svg.selectAll('*').remove();
 
         const width = 900;
         const height = 500;
@@ -88,12 +109,10 @@ const GeoView1 = () => {
         const projection = d3.geoMercator().fitSize([width, height], geoJSON);
         const pathGenerator = d3.geoPath().projection(projection);
 
-        // Heatmap color scale
         const colorScale = d3
             .scaleSequentialLog(d3.interpolateReds)
-            .domain([1, 5000]); // Adjust domain based on data range
+            .domain([1, maxExhibitions]);
 
-        // Add paths for countries
         svg.append('g')
             .selectAll('path')
             .data(geoJSON.features)
@@ -102,20 +121,19 @@ const GeoView1 = () => {
             .attr('d', pathGenerator as any)
             .attr('fill', (d: any) => {
                 const countryCode = d.properties?.iso_a3 || nameToIsoA3Map[d.properties?.name];
-                if (!countryCode) return '#ccc'; // Default color for missing data
+                if (!countryCode) return '#ccc';
                 const countryData = data[countryCode];
-                if (!countryData) return '#ccc'; // Default color for missing data
+                if (!countryData) return '#ccc';
                 const yearData = countryData.data.find(
                     (entry: any) => entry.e_startdate === year
                 );
                 const numExhibitions = yearData?.num_exhibitions || 0;
-                return numExhibitions > 0 ? colorScale(numExhibitions) : '#ccc';
+                return numExhibitions >= minExhibitions ? colorScale(numExhibitions) : '#ccc';
             })
             .attr('stroke', '#ffffff');
 
-        // Add color scale legend
         const legend = d3.select(legendRef.current);
-        legend.selectAll('*').remove(); // Clear previous elements
+        legend.selectAll('*').remove();
 
         const legendHeight = 300;
         const legendWidth = 20;
@@ -125,10 +143,7 @@ const GeoView1 = () => {
             .domain(colorScale.domain())
             .range([legendHeight, 0]);
 
-        const legendAxis = d3
-            .axisRight(legendScale)
-            .ticks(5, '~s') // Adjust tick formatting and number
-            .tickSize(6);
+        const legendAxis = d3.axisRight(legendScale).ticks(5, '~s').tickSize(6);
 
         const gradient = legend
             .append('defs')
@@ -141,7 +156,12 @@ const GeoView1 = () => {
 
         const gradientStops = d3
             .range(0, 1.1, 0.1)
-            .map((t) => ({ t, color: colorScale(colorScale.domain()[0] * (colorScale.domain()[1] / colorScale.domain()[0]) ** t) }));
+            .map((t) => ({
+                t,
+                color: colorScale(
+                    colorScale.domain()[0] * (colorScale.domain()[1] / colorScale.domain()[0]) ** t
+                ),
+            }));
 
         gradient
             .selectAll('stop')
@@ -157,15 +177,33 @@ const GeoView1 = () => {
             .attr('height', legendHeight)
             .style('fill', 'url(#legend-gradient)')
             .attr('x', 0)
-            .attr('y', 0);
+            .attr('y', 20);
 
         legend
             .append('g')
-            .attr('transform', `translate(${legendWidth}, 0)`)
+            .attr('transform', `translate(${legendWidth}, 20)`)
             .call(legendAxis);
-    }, [worldMap, data, year]);
 
-    if (!worldMap || !data) return <p>Loading data...</p>;
+        legend
+            .append('text')
+            .attr('x', -legendHeight / 2 - 20)
+            .attr('y', -30)
+            .attr('transform', `rotate(-90)`)
+            .style('text-anchor', 'middle')
+            .text('Number of Exhibitions');
+    }, [worldMap, data, year, minExhibitions, maxExhibitions]);
+
+    const tableData = summaryData();
+
+    const exportData = () => {
+        const blob = new Blob([JSON.stringify(tableData, null, 2)], {
+            type: 'application/json',
+        });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'exhibitions_data.json';
+        link.click();
+    };
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>
@@ -183,21 +221,63 @@ const GeoView1 = () => {
             </button>
             <h1>Geographical Heatmap of Exhibitions</h1>
             <p style={{ maxWidth: '600px', textAlign: 'center', margin: '10px 0' }}>
-                This map visualizes the number of exhibitions held in various countries between 1902 and 1915. Use the slider below to explore the data for different years. The color scale on the right indicates the number of exhibitions, with darker shades representing higher counts.
+                This map visualizes the number of exhibitions held in various countries between 1902 and 1915. Use the sliders below to explore the data for different years and set the minimum number of exhibitions required to display a country.
             </p>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <svg ref={svgRef} width={900} height={500}></svg>
-                <svg ref={legendRef} width={100} height={300} style={{ marginLeft: '10px' }}></svg>
+                <svg ref={legendRef} width={100} height={350} style={{ marginLeft: '10px' }}></svg>
             </div>
-            <input
-                type="range"
-                min="1902"
-                max="1915"
-                value={year}
-                onChange={(e) => setYear(parseInt(e.target.value, 10))}
-                style={{ width: '50%', marginTop: '10px' }}
-            />
-            <p>Year: {year}</p>
+            <div style={{ display: 'flex', justifyContent: 'space-around', width: '100%', marginTop: '20px' }}>
+                <div>
+                    <input
+                        type="range"
+                        min="1902"
+                        max="1915"
+                        value={year}
+                        onChange={(e) => setYear(parseInt(e.target.value, 10))}
+                        style={{ width: '300px' }}
+                    />
+                    <p>Year: {year}</p>
+                </div>
+                <div>
+                    <input
+                        type="range"
+                        min="1"
+                        max={maxExhibitions}
+                        value={minExhibitions}
+                        onChange={(e) => setMinExhibitions(parseInt(e.target.value, 10))}
+                        style={{ width: '300px' }}
+                    />
+                    <p>Minimum Exhibitions: {minExhibitions}</p>
+                </div>
+            </div>
+            <table style={{ marginTop: '20px', borderCollapse: 'collapse', width: '80%', textAlign: 'left' }}>
+                <thead>
+                <tr style={{ backgroundColor: '#f2f2f2' }}>
+                    <th style={{ padding: '10px', border: '1px solid #ddd' }}>Country</th>
+                    <th style={{ padding: '10px', border: '1px solid #ddd' }}>Exhibitions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {tableData.map((entry, index) => (
+                    <tr key={index}>
+                        <td style={{ padding: '10px', border: '1px solid #ddd' }}>{entry.country}</td>
+                        <td style={{ padding: '10px', border: '1px solid #ddd' }}>{entry.numExhibitions}</td>
+                    </tr>
+                ))}
+                </tbody>
+            </table>
+            <button
+                style={{
+                    marginTop: '20px',
+                    padding: '10px 20px',
+                    fontSize: '14px',
+                    cursor: 'pointer',
+                }}
+                onClick={exportData}
+            >
+                Export Data
+            </button>
         </div>
     );
 };
