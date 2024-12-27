@@ -75,5 +75,171 @@
       { "e_startdate": 1914, "num_exhibitions": 1350 },
       { "e_startdate": 1915, "num_exhibitions": 458 }
     ]
+  },
+  "ESP": {
+    "country_name": "Spain",
+    "data": [
+      { "e_startdate": 1912, "num_exhibitions": 8 }
+    ]
+  },
+  "FRA": {
+    "country_name": "France",
+    "data": [
+      { "e_startdate": 1904, "num_exhibitions": 9 },
+      { "e_startdate": 1905, "num_exhibitions": 1124 },
+      { "e_startdate": 1906, "num_exhibitions": 1022 },
+      { "e_startdate": 1907, "num_exhibitions": 950 },
+      { "e_startdate": 1908, "num_exhibitions": 539 },
+      { "e_startdate": 1909, "num_exhibitions": 140 },
+      { "e_startdate": 1910, "num_exhibitions": 364 },
+      { "e_startdate": 1911, "num_exhibitions": 628 },
+      { "e_startdate": 1912, "num_exhibitions": 1222 },
+      { "e_startdate": 1913, "num_exhibitions": 181 },
+      { "e_startdate": 1914, "num_exhibitions": 179 }
+    ]
+  },
+  "GBR": {
+    "country_name": "United Kingdom",
+    "data": [
+      { "e_startdate": 1905, "num_exhibitions": 250 },
+      { "e_startdate": 1906, "num_exhibitions": 527 },
+      { "e_startdate": 1907, "num_exhibitions": 308 },
+      { "e_startdate": 1908, "num_exhibitions": 1809 },
+      { "e_startdate": 1909, "num_exhibitions": 1231 },
+      { "e_startdate": 1910, "num_exhibitions": 611 },
+      { "e_startdate": 1911, "num_exhibitions": 1348 },
+      { "e_startdate": 1912, "num_exhibitions": 432 },
+      { "e_startdate": 1913, "num_exhibitions": 853 },
+      { "e_startdate": 1914, "num_exhibitions": 789 },
+      { "e_startdate": 1915, "num_exhibitions": 539 }
+    ]
+  },
+  "HUN": {
+    "country_name": "Hungary",
+    "data": [
+      { "e_startdate": 1905, "num_exhibitions": 470 },
+      { "e_startdate": 1906, "num_exhibitions": 811 },
+      { "e_startdate": 1907, "num_exhibitions": 403 },
+      { "e_startdate": 1908, "num_exhibitions": 442 },
+      { "e_startdate": 1909, "num_exhibitions": 749 },
+      { "e_startdate": 1910, "num_exhibitions": 440 },
+      { "e_startdate": 1911, "num_exhibitions": 121 },
+      { "e_startdate": 1912, "num_exhibitions": 131 },
+      { "e_startdate": 1913, "num_exhibitions": 432 },
+      { "e_startdate": 1914, "num_exhibitions": 87 },
+      { "e_startdate": 1915, "num_exhibitions": 10 }
+    ]
+  },
+  "ITA": {
+    "country_name": "Italy",
+    "data": [
+      { "e_startdate": 1905, "num_exhibitions": 792 },
+      { "e_startdate": 1906, "num_exhibitions": 705 },
+      { "e_startdate": 1907, "num_exhibitions": 959 },
+      { "e_startdate": 1908, "num_exhibitions": 264 },
+      { "e_startdate": 1909, "num_exhibitions": 922 },
+      { "e_startdate": 1910, "num_exhibitions": 1001 },
+      { "e_startdate": 1912, "num_exhibitions": 814 },
+      { "e_startdate": 1913, "num_exhibitions": 213 },
+      { "e_startdate": 1914, "num_exhibitions": 1209 },
+      { "e_startdate": 1915, "num_exhibitions": 152 }
+    ]
+  },
+  "JPN": {
+    "country_name": "Japan",
+    "data": [
+      { "e_startdate": 1914, "num_exhibitions": 26 }
+    ]
+  },
+  "LTU": {
+    "country_name": "Lithuania",
+    "data": [
+      { "e_startdate": 1909, "num_exhibitions": 17 }
+    ]
+  },
+  "NLD": {
+    "country_name": "Netherlands",
+    "data": [
+      { "e_startdate": 1905, "num_exhibitions": 649 },
+      { "e_startdate": 1906, "num_exhibitions": 3 },
+      { "e_startdate": 1907, "num_exhibitions": 1119 },
+      { "e_startdate": 1908, "num_exhibitions": 395 },
+      { "e_startdate": 1909, "num_exhibitions": 1311 },
+      { "e_startdate": 1910, "num_exhibitions": 506 },
+      { "e_startdate": 1911, "num_exhibitions": 513 },
+      { "e_startdate": 1912, "num_exhibitions": 1146 },
+      { "e_startdate": 1913, "num_exhibitions": 99 },
+      { "e_startdate": 1914, "num_exhibitions": 941 },
+      { "e_startdate": 1915, "num_exhibitions": 9 }
+    ]
+  },
+  "POL": {
+    "country_name": "Poland",
+    "data": [
+      { "e_startdate": 1908, "num_exhibitions": 39 },
+      { "e_startdate": 1912, "num_exhibitions": 1 }
+    ]
+  },
+  "RUS": {
+    "country_name": "Russia",
+    "data": [
+      { "e_startdate": 1905, "num_exhibitions": 91 },
+      { "e_startdate": 1906, "num_exhibitions": 169 },
+      { "e_startdate": 1907, "num_exhibitions": 211 },
+      { "e_startdate": 1908, "num_exhibitions": 284 },
+      { "e_startdate": 1909, "num_exhibitions": 269 },
+      { "e_startdate": 1910, "num_exhibitions": 457 },
+      { "e_startdate": 1911, "num_exhibitions": 280 },
+      { "e_startdate": 1912, "num_exhibitions": 371 },
+      { "e_startdate": 1913, "num_exhibitions": 454 },
+      { "e_startdate": 1914, "num_exhibitions": 184 },
+      { "e_startdate": 1915, "num_exhibitions": 103 },
+      { "e_startdate": 1916, "num_exhibitions": 14 }
+    ]
+  },
+  "SWE": {
+    "country_name": "Sweden",
+    "data": [
+      { "e_startdate": 1909, "num_exhibitions": 28 },
+      { "e_startdate": 1910, "num_exhibitions": 45 },
+      { "e_startdate": 1911, "num_exhibitions": 417 },
+      { "e_startdate": 1913, "num_exhibitions": 2 }
+    ]
+  },
+  "UKR": {
+    "country_name": "Ukraine",
+    "data": [
+      { "e_startdate": 1908, "num_exhibitions": 19 },
+      { "e_startdate": 1909, "num_exhibitions": 248 },
+      { "e_startdate": 1910, "num_exhibitions": 566 },
+      { "e_startdate": 1911, "num_exhibitions": 55 },
+      { "e_startdate": 1913, "num_exhibitions": 35 }
+    ]
+  },
+  "USA": {
+    "country_name": "United States",
+    "data": [
+      { "e_startdate": 1905, "num_exhibitions": 270 },
+      { "e_startdate": 1906, "num_exhibitions": 2 },
+      { "e_startdate": 1908, "num_exhibitions": 9 },
+      { "e_startdate": 1909, "num_exhibitions": 86 },
+      { "e_startdate": 1910, "num_exhibitions": 202 },
+      { "e_startdate": 1911, "num_exhibitions": 241 },
+      { "e_startdate": 1912, "num_exhibitions": 372 },
+      { "e_startdate": 1913, "num_exhibitions": 1218 },
+      { "e_startdate": 1914, "num_exhibitions": 270 },
+      { "e_startdate": 1915, "num_exhibitions": 17 }
+    ]
+  },
+  "Unknown": {
+    "country_name": "Unknown",
+    "data": [
+      { "e_startdate": 1909, "num_exhibitions": 124 },
+      { "e_startdate": 1910, "num_exhibitions": 291 },
+      { "e_startdate": 1911, "num_exhibitions": 2 },
+      { "e_startdate": 1912, "num_exhibitions": 5 },
+      { "e_startdate": 1913, "num_exhibitions": 1 },
+      { "e_startdate": 1914, "num_exhibitions": 1 }
+    ]
   }
 }
