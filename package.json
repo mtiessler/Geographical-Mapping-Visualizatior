@@ -1,8 +1,0 @@
-{
-  "dependencies": {
-    "topojson-client": "^3.1.0"
-  },
-  "devDependencies": {
-    "@types/topojson-client": "^3.1.5"
-  }
-}
