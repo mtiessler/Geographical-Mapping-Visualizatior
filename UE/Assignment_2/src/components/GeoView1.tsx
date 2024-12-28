@@ -39,6 +39,7 @@ const GeoView1 = () => {
     const [worldMap, setWorldMap] = useState<any>(null);
     const [data, setData] = useState<Record<string, any> | null>(null);
     const [maxExhibitions, setMaxExhibitions] = useState<number>(5000);
+    const [sortConfig, setSortConfig] = useState<{ key: 'country' | 'numExhibitions'; direction: 'asc' | 'desc' } | null>(null);
 
     const fetchWorldMap = async () => {
         try {
@@ -85,7 +86,7 @@ const GeoView1 = () => {
 
     const summaryData = () => {
         if (!data) return [];
-        return Object.entries(data)
+        let result = Object.entries(data)
             .map(([key, value]: [string, any]) => {
                 const yearData = value.data.find((entry: any) => entry.e_startdate === year);
                 return {
@@ -94,6 +95,25 @@ const GeoView1 = () => {
                 };
             })
             .filter((entry) => entry.numExhibitions >= minExhibitions);
+
+        if (sortConfig) {
+            result = result.sort((a, b) => {
+                const key = sortConfig.key as keyof typeof a; // Explicitly assert the key type
+                if (a[key] < b[key]) return sortConfig.direction === 'asc' ? -1 : 1;
+                if (a[key] > b[key]) return sortConfig.direction === 'asc' ? 1 : -1;
+                return 0;
+            });
+        }
+
+        return result;
+    };
+
+    const handleSort = (key: 'country' | 'numExhibitions') => {
+        let direction: 'asc' | 'desc' = 'asc';
+        if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
+            direction = 'desc';
+        }
+        setSortConfig({ key, direction });
     };
 
     const exportData = () => {
@@ -242,7 +262,7 @@ const GeoView1 = () => {
     }, [worldMap, data, year, minExhibitions, maxExhibitions]);
 
     return (
-        <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div style={{padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
             <button
                 style={{
                     alignSelf: 'flex-start',
@@ -251,18 +271,25 @@ const GeoView1 = () => {
                     fontSize: '14px',
                     cursor: 'pointer',
                 }}
-                onClick={() => window.history.back()}
+                onClick={() => (window.location.href = '/')}
             >
                 Go Back
             </button>
             <h1>Geographical Heatmap of Exhibitions</h1>
-            <p style={{ maxWidth: '600px', textAlign: 'center', margin: '10px 0' }}>
+            <p style={{maxWidth: '600px', textAlign: 'center', margin: '10px 0'}}>
                 This map visualizes the number of exhibitions held in various countries between 1902 and 1915.
-                You are currently viewing data for <strong>{year}</strong>. Use the sliders below to explore the data for different years and set the minimum number of exhibitions required to display a country.
+                You are currently viewing data for <strong>{year}</strong>
+                {importantDates.some((date) => date.year === year) && (
+                    <span style={{color: 'red', fontWeight: 'bold'}}>
+                        {' '}({importantDates.find((date) => date.year === year)?.description})
+                    </span>
+                )}.
+                Use the sliders below to explore the data for different years and set the minimum number of exhibitions
+                required to display a country.
             </p>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <svg ref={svgRef} width={900} height={500} style={{ border: '1px solid #ccc' }}></svg>
-                <svg ref={legendRef} width={100} height={350} style={{ marginLeft: '10px' }}></svg>
+            <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                <svg ref={svgRef} width={900} height={500} style={{border: '1px solid #ccc'}}></svg>
+                <svg ref={legendRef} width={100} height={350} style={{marginLeft: '10px'}}></svg>
             </div>
             <div
                 ref={tooltipRef}
@@ -277,7 +304,7 @@ const GeoView1 = () => {
                     zIndex: 10,
                 }}
             ></div>
-            <div style={{ display: 'flex', justifyContent: 'space-around', width: '100%', marginTop: '20px' }}>
+            <div style={{display: 'flex', justifyContent: 'space-around', width: '100%', marginTop: '20px'}}>
                 <div>
                     <input
                         type="range"
@@ -285,7 +312,7 @@ const GeoView1 = () => {
                         max="1915"
                         value={year}
                         onChange={(e) => setYear(parseInt(e.target.value, 10))}
-                        style={{ width: '300px' }}
+                        style={{width: '300px'}}
                     />
                     <p>Year: {year}</p>
                 </div>
@@ -296,31 +323,51 @@ const GeoView1 = () => {
                         max={maxExhibitions}
                         value={minExhibitions}
                         onChange={(e) => setMinExhibitions(parseInt(e.target.value, 10))}
-                        style={{ width: '300px' }}
+                        style={{width: '300px'}}
                     />
                     <p>Minimum Exhibitions: {minExhibitions}</p>
                 </div>
             </div>
-            <div style={{ marginTop: '20px', textAlign: 'center' }}>
-                <p><strong>Important Dates</strong></p>
-                {importantDates.map((date, index) => (
-                    <p key={index} style={{ margin: '5px 0' }}>
-                        {date.year}: {date.description}
-                    </p>
-                ))}
-            </div>
-            <table style={{ marginTop: '20px', borderCollapse: 'collapse', width: '80%', textAlign: 'left' }}>
+            <table style={{marginTop: '20px', borderCollapse: 'collapse', width: '80%', textAlign: 'left'}}>
                 <thead>
-                <tr style={{ backgroundColor: '#f2f2f2' }}>
-                    <th style={{ padding: '10px', border: '1px solid #ddd' }}>Country</th>
-                    <th style={{ padding: '10px', border: '1px solid #ddd' }}>Exhibitions</th>
+                <tr style={{backgroundColor: '#f2f2f2'}}>
+                    <th style={{padding: '10px', border: '1px solid #ddd'}}>
+                        Country
+                        <button
+                            onClick={() => handleSort('country')}
+                            style={{
+                                marginLeft: '10px',
+                                backgroundColor: '#ddd',
+                                border: 'none',
+                                cursor: 'pointer',
+                                padding: '5px',
+                            }}
+                        >
+                            Sort
+                        </button>
+                    </th>
+                    <th style={{padding: '10px', border: '1px solid #ddd'}}>
+                        Exhibitions
+                        <button
+                            onClick={() => handleSort('numExhibitions')}
+                            style={{
+                                marginLeft: '10px',
+                                backgroundColor: '#ddd',
+                                border: 'none',
+                                cursor: 'pointer',
+                                padding: '5px',
+                            }}
+                        >
+                            Sort
+                        </button>
+                    </th>
                 </tr>
                 </thead>
                 <tbody>
                 {summaryData().map((entry, index) => (
                     <tr key={index}>
-                        <td style={{ padding: '10px', border: '1px solid #ddd' }}>{entry.country}</td>
-                        <td style={{ padding: '10px', border: '1px solid #ddd' }}>{entry.numExhibitions}</td>
+                        <td style={{padding: '10px', border: '1px solid #ddd'}}>{entry.country}</td>
+                        <td style={{padding: '10px', border: '1px solid #ddd'}}>{entry.numExhibitions}</td>
                     </tr>
                 ))}
                 </tbody>
