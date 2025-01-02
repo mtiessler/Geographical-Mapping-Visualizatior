@@ -1,0 +1,1259 @@
+{
+  "Edouard Vuillard": {
+    "1905": [
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 18
+      },
+      {
+        "e.country": "IT",
+        "e.country_3": "ITA",
+        "num_exhibitions": 2
+      }
+    ],
+    "1906": [
+      {
+        "e.country": "DE",
+        "e.country_3": "DEU",
+        "num_exhibitions": 12
+      },
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 6
+      }
+    ],
+    "1907": [
+      {
+        "e.country": "CZ",
+        "e.country_3": "CZE",
+        "num_exhibitions": 6
+      },
+      {
+        "e.country": "DE",
+        "e.country_3": "DEU",
+        "num_exhibitions": 7
+      },
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 22
+      },
+      {
+        "e.country": "IT",
+        "e.country_3": "ITA",
+        "num_exhibitions": 2
+      }
+    ],
+    "1908": [
+      {
+        "e.country": "BE",
+        "e.country_3": "BEL",
+        "num_exhibitions": 6
+      },
+      {
+        "e.country": "CH",
+        "e.country_3": "CHE",
+        "num_exhibitions": 6
+      },
+      {
+        "e.country": "DE",
+        "e.country_3": "DEU",
+        "num_exhibitions": 38
+      },
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 92
+      }
+    ],
+    "1909": [
+      {
+        "e.country": "AT",
+        "e.country_3": "AUT",
+        "num_exhibitions": 4
+      },
+      {
+        "e.country": "BE",
+        "e.country_3": "BEL",
+        "num_exhibitions": 14
+      },
+      {
+        "e.country": "DE",
+        "e.country_3": "DEU",
+        "num_exhibitions": 10
+      },
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 53
+      },
+      {
+        "e.country": "LV",
+        "e.country_3": "LVA",
+        "num_exhibitions": 2
+      },
+      {
+        "e.country": "RU",
+        "e.country_3": "RUS",
+        "num_exhibitions": 2
+      },
+      {
+        "e.country": "UA",
+        "e.country_3": "UKR",
+        "num_exhibitions": 4
+      }
+    ],
+    "1910": [
+      {
+        "e.country": "BE",
+        "e.country_3": "BEL",
+        "num_exhibitions": 12
+      },
+      {
+        "e.country": "DE",
+        "e.country_3": "DEU",
+        "num_exhibitions": 8
+      },
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 11
+      },
+      {
+        "e.country": "LV",
+        "e.country_3": "LVA",
+        "num_exhibitions": 4
+      },
+      {
+        "e.country": "RU",
+        "e.country_3": "RUS",
+        "num_exhibitions": 6
+      },
+      {
+        "e.country": "UA",
+        "e.country_3": "UKR",
+        "num_exhibitions": 8
+      }
+    ],
+    "1911": [
+      {
+        "e.country": "BE",
+        "e.country_3": "BEL",
+        "num_exhibitions": 4
+      },
+      {
+        "e.country": "DE",
+        "e.country_3": "DEU",
+        "num_exhibitions": 4
+      },
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 37
+      }
+    ],
+    "1912": [
+      {
+        "e.country": "AT",
+        "e.country_3": "AUT",
+        "num_exhibitions": 1
+      },
+      {
+        "e.country": "DE",
+        "e.country_3": "DEU",
+        "num_exhibitions": 8
+      },
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 31
+      },
+      {
+        "e.country": "NL",
+        "e.country_3": "NLD",
+        "num_exhibitions": 2
+      },
+      {
+        "e.country": "RU",
+        "e.country_3": "RUS",
+        "num_exhibitions": 4
+      }
+    ],
+    "1913": [
+      {
+        "e.country": "AT",
+        "e.country_3": "AUT",
+        "num_exhibitions": 2
+      },
+      {
+        "e.country": "BE",
+        "e.country_3": "BEL",
+        "num_exhibitions": 3
+      },
+      {
+        "e.country": "DE",
+        "e.country_3": "DEU",
+        "num_exhibitions": 2
+      },
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 18
+      },
+      {
+        "e.country": "GB",
+        "e.country_3": "GBR",
+        "num_exhibitions": 1
+      },
+      {
+        "e.country": "HU",
+        "e.country_3": "HUN",
+        "num_exhibitions": 7
+      },
+      {
+        "e.country": "IT",
+        "e.country_3": "ITA",
+        "num_exhibitions": 2
+      },
+      {
+        "e.country": "US",
+        "e.country_3": "USA",
+        "num_exhibitions": 5
+      }
+    ],
+    "1914": [
+      {
+        "e.country": "AT",
+        "e.country_3": "AUT",
+        "num_exhibitions": 2
+      },
+      {
+        "e.country": "BE",
+        "e.country_3": "BEL",
+        "num_exhibitions": 4
+      },
+      {
+        "e.country": "CZ",
+        "e.country_3": "CZE",
+        "num_exhibitions": 4
+      },
+      {
+        "e.country": "DE",
+        "e.country_3": "DEU",
+        "num_exhibitions": 4
+      },
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 12
+      }
+    ],
+    "1915": [
+      {
+        "e.country": "IT",
+        "e.country_3": "ITA",
+        "num_exhibitions": 3
+      }
+    ]
+  },
+  "Helen Whitfield": {
+    "1909": [
+      {
+        "e.country": "GB",
+        "e.country_3": "GBR",
+        "num_exhibitions": 6
+      }
+    ]
+  },
+  "Helena Blankstein": {
+    "1908": [
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 2
+      }
+    ]
+  },
+  "Henri Matisse": {
+    "1905": [
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 33
+      }
+    ],
+    "1906": [
+      {
+        "e.country": "BE",
+        "e.country_3": "BEL",
+        "num_exhibitions": 14
+      },
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 66
+      }
+    ],
+    "1907": [
+      {
+        "e.country": "AT",
+        "e.country_3": "AUT",
+        "num_exhibitions": 5
+      },
+      {
+        "e.country": "DE",
+        "e.country_3": "DEU",
+        "num_exhibitions": 22
+      },
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 5
+      },
+      {
+        "e.country": "HU",
+        "e.country_3": "HUN",
+        "num_exhibitions": 2
+      }
+    ],
+    "1908": [
+      {
+        "e.country": "CH",
+        "e.country_3": "CHE",
+        "num_exhibitions": 4
+      },
+      {
+        "e.country": "DE",
+        "e.country_3": "DEU",
+        "num_exhibitions": 3
+      },
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 8
+      }
+    ],
+    "1909": [
+      {
+        "e.country": "AT",
+        "e.country_3": "AUT",
+        "num_exhibitions": 4
+      },
+      {
+        "e.country": "DE",
+        "e.country_3": "DEU",
+        "num_exhibitions": 56
+      },
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 2
+      },
+      {
+        "e.country": "LV",
+        "e.country_3": "LVA",
+        "num_exhibitions": 2
+      },
+      {
+        "e.country": "RU",
+        "e.country_3": "RUS",
+        "num_exhibitions": 2
+      },
+      {
+        "e.country": "UA",
+        "e.country_3": "UKR",
+        "num_exhibitions": 4
+      }
+    ],
+    "1910": [
+      {
+        "e.country": "BE",
+        "e.country_3": "BEL",
+        "num_exhibitions": 4
+      },
+      {
+        "e.country": "CZ",
+        "e.country_3": "CZE",
+        "num_exhibitions": 10
+      },
+      {
+        "e.country": "DE",
+        "e.country_3": "DEU",
+        "num_exhibitions": 10
+      },
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 97
+      },
+      {
+        "e.country": "GB",
+        "e.country_3": "GBR",
+        "num_exhibitions": 15
+      },
+      {
+        "e.country": "HU",
+        "e.country_3": "HUN",
+        "num_exhibitions": 2
+      },
+      {
+        "e.country": "IT",
+        "e.country_3": "ITA",
+        "num_exhibitions": 1
+      },
+      {
+        "e.country": "LV",
+        "e.country_3": "LVA",
+        "num_exhibitions": 4
+      },
+      {
+        "e.country": "RU",
+        "e.country_3": "RUS",
+        "num_exhibitions": 6
+      },
+      {
+        "e.country": "UA",
+        "e.country_3": "UKR",
+        "num_exhibitions": 8
+      }
+    ],
+    "1911": [
+      {
+        "e.country": "CH",
+        "e.country_3": "CHE",
+        "num_exhibitions": 2
+      },
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 7
+      }
+    ],
+    "1912": [
+      {
+        "e.country": "CH",
+        "e.country_3": "CHE",
+        "num_exhibitions": 8
+      },
+      {
+        "e.country": "DE",
+        "e.country_3": "DEU",
+        "num_exhibitions": 12
+      },
+      {
+        "e.country": "GB",
+        "e.country_3": "GBR",
+        "num_exhibitions": 32
+      },
+      {
+        "e.country": "RU",
+        "e.country_3": "RUS",
+        "num_exhibitions": 3
+      }
+    ],
+    "1913": [
+      {
+        "e.country": "AT",
+        "e.country_3": "AUT",
+        "num_exhibitions": 1
+      },
+      {
+        "e.country": "DE",
+        "e.country_3": "DEU",
+        "num_exhibitions": 12
+      },
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 12
+      },
+      {
+        "e.country": "GB",
+        "e.country_3": "GBR",
+        "num_exhibitions": 2
+      },
+      {
+        "e.country": "HU",
+        "e.country_3": "HUN",
+        "num_exhibitions": 1
+      },
+      {
+        "e.country": "IT",
+        "e.country_3": "ITA",
+        "num_exhibitions": 2
+      },
+      {
+        "e.country": "US",
+        "e.country_3": "USA",
+        "num_exhibitions": 72
+      }
+    ],
+    "1914": [
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 4
+      },
+      {
+        "e.country": "IT",
+        "e.country_3": "ITA",
+        "num_exhibitions": 10
+      }
+    ],
+    "1915": [
+      {
+        "e.country": "US",
+        "e.country_3": "USA",
+        "num_exhibitions": 19
+      }
+    ]
+  },
+  "Maurice Denis": {
+    "1905": [
+      {
+        "e.country": "AT",
+        "e.country_3": "AUT",
+        "num_exhibitions": 6
+      }
+    ],
+    "1906": [
+      {
+        "e.country": "DE",
+        "e.country_3": "DEU",
+        "num_exhibitions": 8
+      }
+    ],
+    "1907": [
+      {
+        "e.country": "AT",
+        "e.country_3": "AUT",
+        "num_exhibitions": 3
+      },
+      {
+        "e.country": "DE",
+        "e.country_3": "DEU",
+        "num_exhibitions": 5
+      },
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 72
+      },
+      {
+        "e.country": "HU",
+        "e.country_3": "HUN",
+        "num_exhibitions": 2
+      },
+      {
+        "e.country": "IT",
+        "e.country_3": "ITA",
+        "num_exhibitions": 4
+      }
+    ],
+    "1908": [
+      {
+        "e.country": "BE",
+        "e.country_3": "BEL",
+        "num_exhibitions": 14
+      },
+      {
+        "e.country": "CH",
+        "e.country_3": "CHE",
+        "num_exhibitions": 8
+      },
+      {
+        "e.country": "DE",
+        "e.country_3": "DEU",
+        "num_exhibitions": 6
+      },
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 91
+      }
+    ],
+    "1909": [
+      {
+        "e.country": "AT",
+        "e.country_3": "AUT",
+        "num_exhibitions": 4
+      },
+      {
+        "e.country": "BE",
+        "e.country_3": "BEL",
+        "num_exhibitions": 8
+      },
+      {
+        "e.country": "LV",
+        "e.country_3": "LVA",
+        "num_exhibitions": 3
+      },
+      {
+        "e.country": "RU",
+        "e.country_3": "RUS",
+        "num_exhibitions": 3
+      },
+      {
+        "e.country": "UA",
+        "e.country_3": "UKR",
+        "num_exhibitions": 6
+      }
+    ],
+    "1910": [
+      {
+        "e.country": "DE",
+        "e.country_3": "DEU",
+        "num_exhibitions": 5
+      },
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 11
+      },
+      {
+        "e.country": "GB",
+        "e.country_3": "GBR",
+        "num_exhibitions": 19
+      },
+      {
+        "e.country": "HU",
+        "e.country_3": "HUN",
+        "num_exhibitions": 2
+      },
+      {
+        "e.country": "LV",
+        "e.country_3": "LVA",
+        "num_exhibitions": 6
+      },
+      {
+        "e.country": "RU",
+        "e.country_3": "RUS",
+        "num_exhibitions": 9
+      },
+      {
+        "e.country": "UA",
+        "e.country_3": "UKR",
+        "num_exhibitions": 12
+      }
+    ],
+    "1911": [
+      {
+        "e.country": "BE",
+        "e.country_3": "BEL",
+        "num_exhibitions": 2
+      },
+      {
+        "e.country": "DE",
+        "e.country_3": "DEU",
+        "num_exhibitions": 5
+      },
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 97
+      },
+      {
+        "e.country": "NL",
+        "e.country_3": "NLD",
+        "num_exhibitions": 2
+      }
+    ],
+    "1912": [
+      {
+        "e.country": "DE",
+        "e.country_3": "DEU",
+        "num_exhibitions": 4
+      },
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 16
+      },
+      {
+        "e.country": "NL",
+        "e.country_3": "NLD",
+        "num_exhibitions": 1
+      },
+      {
+        "e.country": "RU",
+        "e.country_3": "RUS",
+        "num_exhibitions": 5
+      }
+    ],
+    "1913": [
+      {
+        "e.country": "AT",
+        "e.country_3": "AUT",
+        "num_exhibitions": 1
+      },
+      {
+        "e.country": "BE",
+        "e.country_3": "BEL",
+        "num_exhibitions": 4
+      },
+      {
+        "e.country": "CZ",
+        "e.country_3": "CZE",
+        "num_exhibitions": 6
+      },
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 5
+      },
+      {
+        "e.country": "HU",
+        "e.country_3": "HUN",
+        "num_exhibitions": 1
+      },
+      {
+        "e.country": "IT",
+        "e.country_3": "ITA",
+        "num_exhibitions": 1
+      },
+      {
+        "e.country": "US",
+        "e.country_3": "USA",
+        "num_exhibitions": 31
+      }
+    ],
+    "1914": [
+      {
+        "e.country": "BE",
+        "e.country_3": "BEL",
+        "num_exhibitions": 6
+      },
+      {
+        "e.country": "DE",
+        "e.country_3": "DEU",
+        "num_exhibitions": 3
+      },
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 4
+      },
+      {
+        "e.country": "IT",
+        "e.country_3": "ITA",
+        "num_exhibitions": 6
+      }
+    ],
+    "1915": [
+      {
+        "e.country": "IT",
+        "e.country_3": "ITA",
+        "num_exhibitions": 2
+      }
+    ]
+  },
+  "Pierre Bonnard": {
+    "1905": [
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 12
+      }
+    ],
+    "1906": [
+      {
+        "e.country": "DE",
+        "e.country_3": "DEU",
+        "num_exhibitions": 12
+      },
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 47
+      }
+    ],
+    "1907": [
+      {
+        "e.country": "CZ",
+        "e.country_3": "CZE",
+        "num_exhibitions": 4
+      },
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 17
+      }
+    ],
+    "1908": [
+      {
+        "e.country": "BE",
+        "e.country_3": "BEL",
+        "num_exhibitions": 6
+      },
+      {
+        "e.country": "CH",
+        "e.country_3": "CHE",
+        "num_exhibitions": 6
+      },
+      {
+        "e.country": "DE",
+        "e.country_3": "DEU",
+        "num_exhibitions": 33
+      },
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 51
+      }
+    ],
+    "1909": [
+      {
+        "e.country": "AT",
+        "e.country_3": "AUT",
+        "num_exhibitions": 8
+      },
+      {
+        "e.country": "BE",
+        "e.country_3": "BEL",
+        "num_exhibitions": 12
+      },
+      {
+        "e.country": "DE",
+        "e.country_3": "DEU",
+        "num_exhibitions": 3
+      },
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 36
+      },
+      {
+        "e.country": "LV",
+        "e.country_3": "LVA",
+        "num_exhibitions": 2
+      },
+      {
+        "e.country": "RU",
+        "e.country_3": "RUS",
+        "num_exhibitions": 2
+      },
+      {
+        "e.country": "UA",
+        "e.country_3": "UKR",
+        "num_exhibitions": 4
+      }
+    ],
+    "1910": [
+      {
+        "e.country": "CZ",
+        "e.country_3": "CZE",
+        "num_exhibitions": 4
+      },
+      {
+        "e.country": "DE",
+        "e.country_3": "DEU",
+        "num_exhibitions": 30
+      },
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 46
+      },
+      {
+        "e.country": "HU",
+        "e.country_3": "HUN",
+        "num_exhibitions": 2
+      },
+      {
+        "e.country": "LV",
+        "e.country_3": "LVA",
+        "num_exhibitions": 4
+      },
+      {
+        "e.country": "RU",
+        "e.country_3": "RUS",
+        "num_exhibitions": 4
+      },
+      {
+        "e.country": "UA",
+        "e.country_3": "UKR",
+        "num_exhibitions": 8
+      }
+    ],
+    "1911": [
+      {
+        "e.country": "DE",
+        "e.country_3": "DEU",
+        "num_exhibitions": 4
+      },
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 44
+      }
+    ],
+    "1912": [
+      {
+        "e.country": "AT",
+        "e.country_3": "AUT",
+        "num_exhibitions": 2
+      },
+      {
+        "e.country": "BE",
+        "e.country_3": "BEL",
+        "num_exhibitions": 18
+      },
+      {
+        "e.country": "DE",
+        "e.country_3": "DEU",
+        "num_exhibitions": 7
+      },
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 34
+      },
+      {
+        "e.country": "GB",
+        "e.country_3": "GBR",
+        "num_exhibitions": 3
+      },
+      {
+        "e.country": "NL",
+        "e.country_3": "NLD",
+        "num_exhibitions": 2
+      },
+      {
+        "e.country": "RU",
+        "e.country_3": "RUS",
+        "num_exhibitions": 6
+      }
+    ],
+    "1913": [
+      {
+        "e.country": "AT",
+        "e.country_3": "AUT",
+        "num_exhibitions": 3
+      },
+      {
+        "e.country": "BE",
+        "e.country_3": "BEL",
+        "num_exhibitions": 10
+      },
+      {
+        "e.country": "DE",
+        "e.country_3": "DEU",
+        "num_exhibitions": 7
+      },
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 21
+      },
+      {
+        "e.country": "GB",
+        "e.country_3": "GBR",
+        "num_exhibitions": 1
+      },
+      {
+        "e.country": "HU",
+        "e.country_3": "HUN",
+        "num_exhibitions": 5
+      },
+      {
+        "e.country": "IT",
+        "e.country_3": "ITA",
+        "num_exhibitions": 2
+      },
+      {
+        "e.country": "US",
+        "e.country_3": "USA",
+        "num_exhibitions": 4
+      }
+    ],
+    "1914": [
+      {
+        "e.country": "CZ",
+        "e.country_3": "CZE",
+        "num_exhibitions": 4
+      },
+      {
+        "e.country": "DE",
+        "e.country_3": "DEU",
+        "num_exhibitions": 4
+      },
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 8
+      }
+    ],
+    "1915": [
+      {
+        "e.country": "IT",
+        "e.country_3": "ITA",
+        "num_exhibitions": 1
+      }
+    ]
+  },
+  "Pierre-Auguste Renoir": {
+    "1904": [
+      {
+        "e.country": "DE",
+        "e.country_3": "DEU",
+        "num_exhibitions": 1
+      }
+    ],
+    "1905": [
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 18
+      },
+      {
+        "e.country": "IT",
+        "e.country_3": "ITA",
+        "num_exhibitions": 4
+      }
+    ],
+    "1906": [
+      {
+        "e.country": "CH",
+        "e.country_3": "CHE",
+        "num_exhibitions": 10
+      },
+      {
+        "e.country": "DE",
+        "e.country_3": "DEU",
+        "num_exhibitions": 11
+      },
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 10
+      }
+    ],
+    "1907": [
+      {
+        "e.country": "CZ",
+        "e.country_3": "CZE",
+        "num_exhibitions": 14
+      },
+      {
+        "e.country": "DE",
+        "e.country_3": "DEU",
+        "num_exhibitions": 7
+      },
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 51
+      },
+      {
+        "e.country": "HU",
+        "e.country_3": "HUN",
+        "num_exhibitions": 11
+      }
+    ],
+    "1908": [
+      {
+        "e.country": "BE",
+        "e.country_3": "BEL",
+        "num_exhibitions": 16
+      },
+      {
+        "e.country": "CH",
+        "e.country_3": "CHE",
+        "num_exhibitions": 8
+      },
+      {
+        "e.country": "DE",
+        "e.country_3": "DEU",
+        "num_exhibitions": 14
+      },
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 2
+      }
+    ],
+    "1909": [
+      {
+        "e.country": "BE",
+        "e.country_3": "BEL",
+        "num_exhibitions": 2
+      },
+      {
+        "e.country": "DE",
+        "e.country_3": "DEU",
+        "num_exhibitions": 48
+      },
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 1
+      }
+    ],
+    "1910": [
+      {
+        "e.country": "BE",
+        "e.country_3": "BEL",
+        "num_exhibitions": 6
+      },
+      {
+        "e.country": "DE",
+        "e.country_3": "DEU",
+        "num_exhibitions": 4
+      },
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 14
+      },
+      {
+        "e.country": "HU",
+        "e.country_3": "HUN",
+        "num_exhibitions": 4
+      },
+      {
+        "e.country": "IT",
+        "e.country_3": "ITA",
+        "num_exhibitions": 76
+      },
+      {
+        "e.country": "US",
+        "e.country_3": "USA",
+        "num_exhibitions": 1
+      }
+    ],
+    "1911": [
+      {
+        "e.country": "AT",
+        "e.country_3": "AUT",
+        "num_exhibitions": 1
+      },
+      {
+        "e.country": "DE",
+        "e.country_3": "DEU",
+        "num_exhibitions": 3
+      },
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 11
+      }
+    ],
+    "1912": [
+      {
+        "e.country": "AT",
+        "e.country_3": "AUT",
+        "num_exhibitions": 13
+      },
+      {
+        "e.country": "DE",
+        "e.country_3": "DEU",
+        "num_exhibitions": 111
+      },
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 48
+      },
+      {
+        "e.country": "NL",
+        "e.country_3": "NLD",
+        "num_exhibitions": 1
+      },
+      {
+        "e.country": "RU",
+        "e.country_3": "RUS",
+        "num_exhibitions": 23
+      },
+      {
+        "e.country": "US",
+        "e.country_3": "USA",
+        "num_exhibitions": 1
+      }
+    ],
+    "1913": [
+      {
+        "e.country": "AT",
+        "e.country_3": "AUT",
+        "num_exhibitions": 21
+      },
+      {
+        "e.country": "BE",
+        "e.country_3": "BEL",
+        "num_exhibitions": 12
+      },
+      {
+        "e.country": "DE",
+        "e.country_3": "DEU",
+        "num_exhibitions": 53
+      },
+      {
+        "e.country": "HU",
+        "e.country_3": "HUN",
+        "num_exhibitions": 4
+      },
+      {
+        "e.country": "IT",
+        "e.country_3": "ITA",
+        "num_exhibitions": 2
+      },
+      {
+        "e.country": "US",
+        "e.country_3": "USA",
+        "num_exhibitions": 11
+      }
+    ],
+    "1914": [
+      {
+        "e.country": "AT",
+        "e.country_3": "AUT",
+        "num_exhibitions": 7
+      },
+      {
+        "e.country": "DE",
+        "e.country_3": "DEU",
+        "num_exhibitions": 15
+      },
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 27
+      }
+    ],
+    "1915": [
+      {
+        "e.country": "IT",
+        "e.country_3": "ITA",
+        "num_exhibitions": 1
+      }
+    ]
+  },
+  "\u00c9mile Norman Saint-Marcel": {
+    "1907": [
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 8
+      }
+    ]
+  },
+  "\u00c9mile Pierre Metzmacher": {
+    "1906": [
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 1
+      }
+    ]
+  },
+  "\u00c9mile Raulin": {
+    "1906": [
+      {
+        "e.country": "FR",
+        "e.country_3": "FRA",
+        "num_exhibitions": 8
+      }
+    ]
+  }
+}
