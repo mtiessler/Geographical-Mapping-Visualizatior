@@ -17,7 +17,7 @@ const Menu: React.FC = () => {
                     <button className="menu-button view3">Geographical View 3</button>
                 </Link>
                 <Link to="/graph">
-                    <button className="menu-button view4">Graph View</button>
+                    <button className="menu-button view4">Artist Collaboration Network</button>
                 </Link>
             </div>
         </div>
