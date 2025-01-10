@@ -1,23 +1,22 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 
-// ------------------
-// Type Definitions
-// ------------------
+// Expanded type definitions to handle D3 force simulation properly
 interface NodeDatum extends d3.SimulationNodeDatum {
-  id: number; // numeric IDs
+  id: number;
   firstname?: string;
   lastname?: string;
   nationality?: string;
   exhibitions_count?: number;
-}
-
-// Extend the link type so that D3 knows source/target refer to NodeDatum
-interface LinkDatum extends d3.SimulationLinkDatum<NodeDatum> {
   weight?: number;
 }
 
-// The top-level JSON structure from /data/artvis_collaboration_network.json
+interface LinkDatum extends d3.SimulationLinkDatum<NodeDatum> {
+  source: number | NodeDatum;
+  target: number | NodeDatum;
+  weight?: number;
+}
+
 interface GraphData {
   nodes: NodeDatum[];
   links: LinkDatum[];
@@ -26,33 +25,38 @@ interface GraphData {
 const ArtVisCollaborationNetwork: React.FC = () => {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const tooltipRef = useRef<HTMLDivElement | null>(null);
-
-  // -- State for data and user interactions --
   const [data, setData] = useState<GraphData | null>(null);
-  const [minEdgeWeight, setMinEdgeWeight] = useState<number>(1);
-  const [sortConfig, setSortConfig] = useState<{
-    key: 'id' | 'nationality' | 'exhibitions_count';
-    direction: 'asc' | 'desc';
-  } | null>(null);
+  const [minEdgeWeight, setMinEdgeWeight] = useState<number>(20);
 
-  // Example: fetch node-link data
   const fetchCollaborationData = async () => {
     try {
-      // Adjust the path to your actual JSON file if needed
       const response = await fetch('/data/artist_collaboration_network.json');
       if (!response.ok) throw new Error('Failed to fetch network data');
       const jsonData: GraphData = await response.json();
 
-      // Convert node IDs to numbers, if they're not already
-      jsonData.nodes.forEach((n) => {
-        n.id = +n.id; // ensure numeric
+      // Calculate total weight of connections for each node
+      const nodeWeights = new Map<number, number>();
+      jsonData.links.forEach(link => {
+        const sourceId =
+          typeof link.source === 'object' ? link.source.id : link.source;
+        const targetId =
+          typeof link.target === 'object' ? link.target.id : link.target;
+        const weight = link.weight || 0;
+
+        if (typeof sourceId === 'number' && typeof targetId === 'number') {
+          nodeWeights.set(sourceId, (nodeWeights.get(sourceId) || 0) + weight);
+          if (sourceId !== targetId) {
+            nodeWeights.set(targetId, (nodeWeights.get(targetId) || 0) + weight);
+          }
+        }
       });
 
-      // Convert link sources/targets to numbers if needed
-      jsonData.links.forEach((link) => {
-        if (typeof link.source === 'string') link.source = +link.source;
-        if (typeof link.target === 'string') link.target = +link.target;
-      });
+      // Add weights to nodes
+      jsonData.nodes = jsonData.nodes.map(node => ({
+        ...node,
+        weight: nodeWeights.get(node.id) || 0,
+        exhibitions_count: nodeWeights.get(node.id) || 0
+      }));
 
       setData(jsonData);
     } catch (error) {
@@ -61,370 +65,204 @@ const ArtVisCollaborationNetwork: React.FC = () => {
     }
   };
 
+  const filteredData = () => {
+    if (!data) return { nodes: [], links: [] };
+
+    const validLinks = data.links.filter(link => {
+      const sourceId =
+        typeof link.source === 'object' ? link.source.id : link.source;
+      const targetId =
+        typeof link.target === 'object' ? link.target.id : link.target;
+      return (link.weight || 0) >= minEdgeWeight && sourceId !== targetId;
+    });
+
+    const usedNodeIds = new Set(
+      validLinks
+        .flatMap(link => {
+          const sourceId =
+            typeof link.source === 'object' ? link.source.id : link.source;
+          const targetId =
+            typeof link.target === 'object' ? link.target.id : link.target;
+          return [sourceId, targetId];
+        })
+        .filter((id): id is number => typeof id === 'number')
+    );
+
+    const validNodes = data.nodes.filter(node => usedNodeIds.has(node.id));
+    return { nodes: validNodes, links: validLinks };
+  };
+
   useEffect(() => {
     fetchCollaborationData();
   }, []);
 
-  // Utility to filter out edges below minEdgeWeight,
-  // so we keep a "filtered" version of the graph.
-  const filteredData = () => {
-    if (!data) return { nodes: [] as NodeDatum[], links: [] as LinkDatum[] };
-
-    // Filter links by weight, then derive the set of used node IDs (number).
-    const validLinks = data.links.filter(
-      (link) => (link.weight || 0) >= minEdgeWeight
-    );
-
-    const usedNodeIds = new Set<number>(
-      validLinks.flatMap((link) => [
-        typeof link.source === 'object'
-          ? (link.source as NodeDatum).id
-          : (link.source as number),
-        typeof link.target === 'object'
-          ? (link.target as NodeDatum).id
-          : (link.target as number),
-      ])
-    );
-
-    // Keep only nodes that appear in at least one link
-    const validNodes = data.nodes.filter((node) => usedNodeIds.has(node.id));
-    return { nodes: validNodes, links: validLinks };
-  };
-
-  // Table summary data (just a trivial example).
-  // We’ll show the node’s nationality and how many times it appears.
-  const summaryData = () => {
-    const { nodes } = filteredData();
-    let result = nodes.map((n) => ({
-      id: n.id,
-      nationality: n.nationality || 'Unknown',
-      exhibitions_count: n.exhibitions_count || 0,
-    }));
-
-    // Sort if needed
-    if (sortConfig) {
-      const { key, direction } = sortConfig;
-      result.sort((a, b) => {
-        if (a[key] < b[key]) return direction === 'asc' ? -1 : 1;
-        if (a[key] > b[key]) return direction === 'asc' ? 1 : -1;
-        return 0;
-      });
-    }
-    return result;
-  };
-
-  const handleSort = (key: 'id' | 'nationality' | 'exhibitions_count') => {
-    let direction: 'asc' | 'desc' = 'asc';
-    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
-      direction = 'desc';
-    }
-    setSortConfig({ key, direction });
-  };
-
-  // Optionally, export the summary as JSON
-  const exportData = () => {
-    const blob = new Blob([JSON.stringify(summaryData(), null, 2)], {
-      type: 'application/json',
-    });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = 'collaboration_summary.json';
-    link.click();
-  };
-
-  // ---------------
-  // MAIN D3 RENDER
-  // ---------------
+  // D3 visualization code
   useEffect(() => {
     if (!data || !svgRef.current) return;
 
     const { nodes, links } = filteredData();
-
-    // Clear previous render
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
 
-    // Tooltip
-    const tooltip = d3.select(tooltipRef.current);
+    // Make these bigger:
+    const width = 1200;
+    const height = 700;
 
-    // Dimensions
-    const width = 900;
-    const height = 500;
+    // Build a color scale by nationality (replacing undefined with "Unknown")
+    const uniqueNationalities = Array.from(
+      new Set(nodes.map(d => d.nationality || 'Unknown'))
+    );
+    const colorScale = d3
+      .scaleOrdinal<string>()
+      .domain(uniqueNationalities)
+      .range(d3.schemeCategory10);
 
-    // Create the force simulation with NodeDatum
+    // Create the force simulation
     const simulation = d3
       .forceSimulation<NodeDatum>(nodes)
       .force(
         'link',
         d3
           .forceLink<NodeDatum, LinkDatum>(links)
-          .id((d) => d.id)
-          .distance(500)
+          .id(d => d.id)
+          .distance(100)
       )
-      .force('charge', d3.forceManyBody().strength(-100))
+      .force('charge', d3.forceManyBody().strength(-200))
       .force('center', d3.forceCenter(width / 2, height / 2))
-      .force('collide', d3.forceCollide(25));
+      .force('collide', d3.forceCollide().radius(30));
 
-    // Prepare color or size scales:
-    // nationality might be undefined => fallback to "Unknown"
-    const nationalitySet = Array.from(
-      new Set(
-        nodes.map((n) => n.nationality || "Unknown")
-      )
-    );
-    const colorScale = d3
-      .scaleOrdinal<string>()
-      .domain(nationalitySet)
-      .range(d3.schemeCategory10);
-
-    // Node size by exhibitions_count
-    const maxExhibitions = d3.max(nodes, (d) => d.exhibitions_count || 0) || 1;
-    const sizeScale = d3.scaleSqrt().domain([0, maxExhibitions]).range([5, 30]);
-
-    // Create container group
     const g = svg.append('g');
 
-    // Edges
+    const maxWeight = d3.max(links, d => d.weight || 0) || 1;
+    const linkScale = d3
+      .scaleLinear()
+      .domain([minEdgeWeight, maxWeight])
+      .range([0.2, 1]);
+
+    // Draw links
     const linkSelection = g
       .selectAll<SVGLineElement, LinkDatum>('line')
       .data(links)
       .enter()
       .append('line')
       .attr('stroke', '#999')
-      .attr('stroke-width', (d) => Math.sqrt(d.weight || 1));
+      .attr('stroke-opacity', d => linkScale(d.weight || 0))
+      .attr('stroke-width', d => Math.sqrt((d.weight || 1) / 5));
 
-    // Nodes
+    // Draw nodes (circle size depends on exhibitions_count)
+    const maxExhibitions = d3.max(nodes, d => d.exhibitions_count || 0) || 1;
+    const sizeScale = d3
+      .scaleSqrt()
+      .domain([0, maxExhibitions])
+      .range([5, 20]);
+
     const nodeSelection = g
       .selectAll<SVGCircleElement, NodeDatum>('circle')
       .data(nodes)
       .enter()
       .append('circle')
-      .attr('r', (d) => sizeScale(d.exhibitions_count || 0))
-      .attr('fill', (d) => colorScale(d.nationality || 'Unknown'))
+      .attr('r', d => sizeScale(d.exhibitions_count || 0))
+      .attr('fill', d => colorScale(d.nationality || 'Unknown'))
+      .attr('stroke', '#fff')
+      .attr('stroke-width', 2);
+
+    // Tooltips
+    const tooltip = d3.select(tooltipRef.current);
+    nodeSelection
       .on('mouseover', (event, d) => {
-        tooltip
-          .style('visibility', 'visible')
-          .html(`
-            <strong>${d.firstname || ''} ${d.lastname || ''}</strong><br/>
-            Nationality: ${d.nationality || 'Unknown'}<br/>
-            Exhibitions: ${d.exhibitions_count || 0}<br/>
-          `);
+        tooltip.style('visibility', 'visible').html(`
+          <strong>${d.firstname} ${d.lastname}</strong><br/>
+          Nationality: ${d.nationality}<br/>
+          Total Exhibitions: ${d.exhibitions_count}<br/>
+        `);
       })
-      .on('mousemove', (event) => {
+      .on('mousemove', event => {
         tooltip
           .style('top', `${event.pageY + 10}px`)
           .style('left', `${event.pageX + 10}px`);
       })
       .on('mouseout', () => {
         tooltip.style('visibility', 'hidden');
-      })
-      .call(
-        d3
-          .drag<SVGCircleElement, NodeDatum>()
-          .on('start', (event, d) => {
-            if (!event.active) simulation.alphaTarget(0.3).restart();
-            d.fx = d.x;
-            d.fy = d.y;
-          })
-          .on('drag', (event, d) => {
-            d.fx = event.x;
-            d.fy = event.y;
-          })
-          .on('end', (event, d) => {
-            if (!event.active) simulation.alphaTarget(0);
-            d.fx = null;
-            d.fy = null;
-          })
-      );
-
-    // Zoom handling
-    const zoom = d3
-      .zoom<SVGSVGElement, unknown>()
-      .scaleExtent([0.5, 8])
-      .on('zoom', (event) => {
-        g.attr('transform', event.transform);
       });
 
+    // Build legend in the top-right
+    const legendG = svg
+      .append('g')
+      .attr('class', 'legend')
+      .attr('transform', `translate(${width - 130}, 20)`);
+
+    uniqueNationalities.forEach((nat, i) => {
+      const legendRow = legendG
+        .append('g')
+        .attr('transform', `translate(0, ${i * 20})`);
+
+      legendRow
+        .append('circle')
+        .attr('r', 6)
+        .attr('fill', colorScale(nat));
+
+      legendRow
+        .append('text')
+        .attr('x', 12)
+        .attr('y', 3)
+        .text(nat)
+        .attr('font-size', '12px')
+        .attr('fill', '#333');
+    });
+
+    // Zoom
+    const zoom = d3
+      .zoom<SVGSVGElement, unknown>()
+      .scaleExtent([0.5, 4])
+      .on('zoom', event => {
+        g.attr('transform', event.transform);
+      });
     svg.call(zoom);
 
-    // Ticking the simulation
+    // Simulation tick
     simulation.on('tick', () => {
       linkSelection
-        .attr('x1', (d) => ((d.source as NodeDatum).x ?? 0))
-        .attr('y1', (d) => ((d.source as NodeDatum).y ?? 0))
-        .attr('x2', (d) => ((d.target as NodeDatum).x ?? 0))
-        .attr('y2', (d) => ((d.target as NodeDatum).y ?? 0));
+        .attr('x1', d => (d.source as NodeDatum).x || 0)
+        .attr('y1', d => (d.source as NodeDatum).y || 0)
+        .attr('x2', d => (d.target as NodeDatum).x || 0)
+        .attr('y2', d => (d.target as NodeDatum).y || 0);
 
       nodeSelection
-        .attr('cx', (d) => d.x ?? 0)
-        .attr('cy', (d) => d.y ?? 0);
+        .attr('cx', d => d.x || 0)
+        .attr('cy', d => d.y || 0);
     });
-  }, [data, minEdgeWeight, sortConfig]);
+  }, [data, minEdgeWeight]);
 
   return (
-    <div
-      style={{
-        padding: '20px',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-      }}
-    >
-      <button
-        style={{
-          alignSelf: 'flex-start',
-          marginBottom: '10px',
-          padding: '10px 20px',
-          fontSize: '14px',
-          cursor: 'pointer',
-        }}
-        onClick={() => (window.location.href = '/')}
-      >
-        Go Back
-      </button>
+    <div className="p-5 flex flex-col items-center">
+      <h1 className="text-2xl font-bold mb-4">Artist Collaboration Network</h1>
 
-      <h1>Artist Collaboration Network</h1>
-      <p style={{ maxWidth: '600px', textAlign: 'center', margin: '10px 0' }}>
-        This visualization shows collaborations among artists based on shared
-        exhibitions. Nodes represent individual artists, and edges indicate
-        shared exhibitions, weighted by how many times artists exhibited
-        together.
-      </p>
-
-      <div
-        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-      >
+      {/* Remove `max-w-4xl` and let width expand */}
+      <div className="w-full">
         <svg
           ref={svgRef}
-          width={900}
-          height={500}
-          style={{ border: '1px solid #ccc' }}
+          width={1200}
+          height={700}
+          className="border border-gray-300"
         />
-      </div>
-
-      {/* Tooltip Div */}
-      <div
-        ref={tooltipRef}
-        style={{
-          position: 'absolute',
-          visibility: 'hidden',
-          background: '#fff',
-          padding: '5px',
-          border: '1px solid #ccc',
-          borderRadius: '4px',
-          pointerEvents: 'none',
-          zIndex: 10,
-        }}
-      ></div>
-
-      {/* Filters */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-around',
-          width: '100%',
-          marginTop: '20px',
-        }}
-      >
-        <div>
-          <input
-            type="range"
-            min="1"
-            max="35"
-            value={minEdgeWeight}
-            onChange={(e) => setMinEdgeWeight(parseInt(e.target.value, 10))}
-            style={{ width: '300px' }}
-          />
-          <p>Minimum Shared-Exhibition Weight: {minEdgeWeight}</p>
+        <div
+          ref={tooltipRef}
+          className="absolute hidden bg-white p-2 border border-gray-300 rounded shadow"
+        />
+        <div className="mt-4">
+          <label className="block mb-2">
+            Minimum Connection Weight: {minEdgeWeight}
+            <input
+              type="range"
+              min="1"
+              max="100"
+              value={minEdgeWeight}
+              onChange={e => setMinEdgeWeight(parseInt(e.target.value))}
+              className="w-full"
+            />
+          </label>
         </div>
       </div>
-
-      {/* Data Table */}
-      <table
-        style={{
-          marginTop: '20px',
-          borderCollapse: 'collapse',
-          width: '80%',
-          textAlign: 'left',
-        }}
-      >
-        <thead>
-          <tr style={{ backgroundColor: '#f2f2f2' }}>
-            <th style={{ padding: '10px', border: '1px solid #ddd' }}>
-              ID
-              <button
-                onClick={() => handleSort('id')}
-                style={{
-                  marginLeft: '10px',
-                  backgroundColor: '#ddd',
-                  border: 'none',
-                  cursor: 'pointer',
-                  padding: '5px',
-                }}
-              >
-                Sort
-              </button>
-            </th>
-            <th style={{ padding: '10px', border: '1px solid #ddd' }}>
-              Nationality
-              <button
-                onClick={() => handleSort('nationality')}
-                style={{
-                  marginLeft: '10px',
-                  backgroundColor: '#ddd',
-                  border: 'none',
-                  cursor: 'pointer',
-                  padding: '5px',
-                }}
-              >
-                Sort
-              </button>
-            </th>
-            <th style={{ padding: '10px', border: '1px solid #ddd' }}>
-              Exhibitions
-              <button
-                onClick={() => handleSort('exhibitions_count')}
-                style={{
-                  marginLeft: '10px',
-                  backgroundColor: '#ddd',
-                  border: 'none',
-                  cursor: 'pointer',
-                  padding: '5px',
-                }}
-              >
-                Sort
-              </button>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {summaryData().map((entry, index) => (
-            <tr key={index}>
-              <td style={{ padding: '10px', border: '1px solid #ddd' }}>
-                {entry.id}
-              </td>
-              <td style={{ padding: '10px', border: '1px solid #ddd' }}>
-                {entry.nationality}
-              </td>
-              <td style={{ padding: '10px', border: '1px solid #ddd' }}>
-                {entry.exhibitions_count}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      <button
-        style={{
-          marginTop: '20px',
-          padding: '10px 20px',
-          fontSize: '14px',
-          cursor: 'pointer',
-        }}
-        onClick={exportData}
-      >
-        Export Data
-      </button>
     </div>
   );
 };
