@@ -166,9 +166,39 @@ const ArtVisCollaborationNetwork: React.FC = () => {
       .attr('stroke', '#fff')
       .attr('stroke-width', 2);
 
-    // Tooltips
+    // Create node groups instead of just circles
+    const nodeGroups = g
+      .selectAll<SVGGElement, NodeDatum>('g.node')
+      .data(nodes)
+      .enter()
+      .append('g')
+      .attr('class', 'node');
+
+    // Add circles to the node groups
+    nodeGroups
+      .append('circle')
+      .attr('r', d => sizeScale(d.exhibitions_count || 0))
+      .attr('fill', d => colorScale(d.nationality || 'Unknown'))
+      .attr('stroke', '#fff')
+      .attr('stroke-width', 2);
+
+    // Add text labels (initials) to the node groups
+    nodeGroups
+      .append('text')
+      .attr('text-anchor', 'middle')
+      .attr('dy', '.3em')
+      .attr('fill', '#fff')
+      .attr('font-size', '10px')
+      .attr('pointer-events', 'none')
+      .text(d => {
+        const firstInitial = d.firstname?.[0] || '';
+        const lastInitial = d.lastname?.[0] || '';
+        return `${firstInitial}${lastInitial}`;
+      });
+
+    // Keep existing tooltip functionality but attach to nodeGroups instead
     const tooltip = d3.select(tooltipRef.current);
-    nodeSelection
+    nodeGroups
       .on('mouseover', (event, d) => {
         tooltip.style('visibility', 'visible').html(`
           <strong>${d.firstname} ${d.lastname}</strong><br/>
@@ -219,7 +249,7 @@ const ArtVisCollaborationNetwork: React.FC = () => {
       });
     svg.call(zoom);
 
-    // Simulation tick
+    // Update the simulation tick to handle the node groups
     simulation.on('tick', () => {
       linkSelection
         .attr('x1', d => (d.source as NodeDatum).x || 0)
@@ -227,17 +257,13 @@ const ArtVisCollaborationNetwork: React.FC = () => {
         .attr('x2', d => (d.target as NodeDatum).x || 0)
         .attr('y2', d => (d.target as NodeDatum).y || 0);
 
-      nodeSelection
-        .attr('cx', d => d.x || 0)
-        .attr('cy', d => d.y || 0);
+      nodeGroups.attr('transform', d => `translate(${d.x || 0},${d.y || 0})`);
     });
   }, [data, minEdgeWeight]);
 
   return (
     <div className="p-5 flex flex-col items-center">
       <h1 className="text-2xl font-bold mb-4">Artist Collaboration Network</h1>
-
-      {/* Remove `max-w-4xl` and let width expand */}
       <div className="w-full">
         <svg
           ref={svgRef}
