@@ -4,65 +4,51 @@
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background: linear-gradient(135deg, #6dd5ed, #2193b0);
-  color: #fff;
-  font-family: Arial, sans-serif;
+  background: linear-gradient(to top, #0054a4, #ffffff); // Blue at the bottom, white at the top
+  color: #ffffff; // White text
+  font-family: 'Arial', sans-serif;
+}
 
-  .menu-title {
-    font-size: 3rem;
-    margin-bottom: 2rem;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-  }
+.menu-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 40px; // Adjust spacing for logo and title
+}
 
-  .menu-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+.menu-logo {
+  width: 100px; // Adjust logo size
+  margin-bottom: 10px; // Add space between logo and title
+  margin-top: -30px; // Raise the logo a bit higher
+}
 
-    .menu-button {
-      padding: 1rem 2rem;
-      font-size: 1.2rem;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);
-      transition: all 0.3s ease;
+.menu-title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #ffffff; // White text for the title
+}
 
-      &.view1 {
-        background-color: #ff6f61;
-        color: #fff;
+.menu-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 200px);
+  grid-gap: 20px;
+  justify-content: center;
+  align-items: center;
+}
 
-        &:hover {
-          background-color: #e05750;
-        }
-      }
+.menu-button {
+  padding: 15px 20px;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #0054a4; // TU Wien blue for button text
+  background-color: #ffffff; // White button background
+  border: 2px solid #0054a4; // TU Wien blue border
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
 
-      &.view2 {
-        background-color: #6a89cc;
-        color: #fff;
-
-        &:hover {
-          background-color: #5a79b3;
-        }
-      }
-
-      &.view3 {
-        background-color: #78e08f;
-        color: #fff;
-
-        &:hover {
-          background-color: #66cc77;
-        }
-      }
-
-      &.view4 {
-        background-color: #f8c291;
-        color: #fff;
-
-        &:hover {
-          background-color: #f5b179;
-        }
-      }
-    }
+  &:hover {
+    background-color: #0054a4;
+    color: #ffffff;
   }
 }
