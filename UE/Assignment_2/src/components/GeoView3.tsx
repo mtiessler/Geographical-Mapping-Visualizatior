@@ -76,15 +76,6 @@ const GeoView3: React.FC = () => {
         }
     };
 
-    useEffect(() => {
-        const loadData = async () => {
-            const mapData = await fetchWorldMap();
-            await fetchData();
-            setWorldMap(mapData);
-        };
-        loadData();
-    }, []);
-
     const filterByArtist = (artist: string | null): void => {
         if (!artist || !data || !data[artist]) {
             setFilteredData(null);
@@ -110,7 +101,7 @@ const GeoView3: React.FC = () => {
 
         setFilteredData(filtered);
         setYears(Object.keys(filtered).sort((a, b) => parseInt(a) - parseInt(b)));
-        setSelectedYear(null); // Reset year selection when the artist changes
+        setSelectedYear(null);
     };
 
     const exportTableData = (): void => {
@@ -137,6 +128,15 @@ const GeoView3: React.FC = () => {
         link.click();
         document.body.removeChild(link);
     };
+
+    useEffect(() => {
+        const loadData = async () => {
+            const mapData = await fetchWorldMap();
+            await fetchData();
+            setWorldMap(mapData);
+        };
+        loadData();
+    }, []);
 
     useEffect(() => {
         if (selectedArtist) {
@@ -272,67 +272,62 @@ const GeoView3: React.FC = () => {
             .text('Number of Exhibitions');
     }, [worldMap, filteredData, selectedYear]);
 
-    const renderTable = (): JSX.Element => {
-        if (!filteredData || Object.keys(filteredData).length === 0) {
-            return <p>No data available for the selected artist.</p>;
-        }
-
-        const rows = Object.values(filteredData).flatMap((yearData) =>
-            yearData.map((row) => ({
-                country: row['e.country'] || 'Unknown',
-                iso3: row['e.country_3'] || 'Unknown',
-                year: row.year || 'Unknown',
-                exhibitions: row.num_exhibitions || 0,
-            }))
-        );
-
-        return (
-            <table style={{ marginTop: '20px', borderCollapse: 'collapse', width: '80%', textAlign: 'left' }}>
-                <thead>
-                <tr style={{ backgroundColor: '#f2f2f2' }}>
-                    <th style={{ padding: '10px', border: '1px solid #ddd' }}>Country</th>
-                    <th style={{ padding: '10px', border: '1px solid #ddd' }}>ISO-3</th>
-                    <th style={{ padding: '10px', border: '1px solid #ddd' }}>Year</th>
-                    <th style={{ padding: '10px', border: '1px solid #ddd' }}>Exhibitions</th>
-                </tr>
-                </thead>
-                <tbody>
-                {rows.map((row, index) => (
-                    <tr key={index}>
-                        <td style={{ padding: '10px', border: '1px solid #ddd' }}>{row.country}</td>
-                        <td style={{ padding: '10px', border: '1px solid #ddd' }}>{row.iso3}</td>
-                        <td style={{ padding: '10px', border: '1px solid #ddd' }}>{row.year}</td>
-                        <td style={{ padding: '10px', border: '1px solid #ddd' }}>{row.exhibitions}</td>
-                    </tr>
-                ))}
-                </tbody>
-            </table>
-        );
-    };
-
     return (
-        <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div
+            style={{
+                padding: '20px',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                minHeight: '100vh',
+                background: 'linear-gradient(to top, #0054a4, #ffffff)',
+                color: '#0054a4',
+                fontFamily: 'Arial, sans-serif',
+                overflowY: 'auto',
+            }}
+        >
             <button
                 style={{
                     alignSelf: 'flex-start',
-                    marginBottom: '10px',
+                    marginBottom: '20px',
                     padding: '10px 20px',
                     fontSize: '14px',
+                    fontWeight: 'bold',
+                    color: '#0054a4',
+                    backgroundColor: '#ffffff',
+                    border: '2px solid #0054a4',
+                    borderRadius: '5px',
                     cursor: 'pointer',
+                    transition: 'all 0.3s ease',
                 }}
                 onClick={() => (window.location.href = '/')}
+                onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#0054a4';
+                    e.currentTarget.style.color = '#ffffff';
+                }}
+                onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = '#ffffff';
+                    e.currentTarget.style.color = '#0054a4';
+                }}
             >
                 Go Back
             </button>
-            <h1>Geographical Heatmap of Exhibitions</h1>
-            <p style={{ maxWidth: '600px', textAlign: 'center', margin: '10px 0' }}>
-                This map visualizes the number of exhibitions held in various countries. Select an artist to view
-                data.
+            <h1 style={{ color: '#0054a4' }}>Geographical Heatmap of Exhibitions</h1>
+            <p style={{ maxWidth: '600px', textAlign: 'center', margin: '10px 0', color: '#0054a4' }}>
+                Select an artist to view the geographical distribution of exhibitions. Use the slider to explore data
+                for different years.
             </p>
             <select
                 value={selectedArtist || ''}
                 onChange={(e) => setSelectedArtist(e.target.value)}
-                style={{ marginBottom: '20px', padding: '10px', fontSize: '14px' }}
+                style={{
+                    marginBottom: '20px',
+                    padding: '10px',
+                    fontSize: '14px',
+                    border: '1px solid #ccc',
+                    borderRadius: '5px',
+                    outline: 'none',
+                }}
             >
                 <option value="" disabled>
                     Select an artist
@@ -343,29 +338,55 @@ const GeoView3: React.FC = () => {
                     </option>
                 ))}
             </select>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <svg ref={svgRef} width={900} height={500} style={{ border: '1px solid #ccc' }}></svg>
-                <svg ref={legendRef} width={100} height={350} style={{ marginLeft: '10px' }}></svg>
+            <div
+                style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: '#ffffff',
+                    padding: '10px',
+                    borderRadius: '10px',
+                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                    width: '100%',
+                    maxWidth: '1000px',
+                }}
+            >
+                <svg
+                    ref={svgRef}
+                    width="100%"
+                    height="500px"
+                    style={{ border: '1px solid #ccc', maxWidth: '700px' }}
+                ></svg>
+                <svg
+                    ref={legendRef}
+                    width={100}
+                    height={350}
+                    style={{ marginLeft: '10px' }}
+                ></svg>
             </div>
-            {years.length > 0 && (
-                <div style={{ width: '80%', marginTop: '20px' }}>
-                    <input
-                        type="range"
-                        min={Math.min(...years.map((year) => parseInt(year)))}
-                        max={Math.max(...years.map((year) => parseInt(year)))}
-                        value={selectedYear ? parseInt(selectedYear) : Math.min(...years.map((year) => parseInt(year)))}
-                        onChange={(e) => setSelectedYear(e.target.value)}
-                        style={{ width: '100%' }}
-                    />
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        {years.map((year) => (
-                            <span key={year} style={{ fontSize: '12px' }}>
-                    {year}
-                </span>
-                        ))}
-                    </div>
-                </div>
-            )}
+            <div
+                style={{
+                    marginTop: '20px',
+                    width: '80%',
+                    textAlign: 'center',
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                }}
+            >
+                <input
+                    type="range"
+                    min={Math.min(...years.map((year) => parseInt(year)))}
+                    max={Math.max(...years.map((year) => parseInt(year)))}
+                    value={selectedYear ? parseInt(selectedYear) : Math.min(...years.map((year) => parseInt(year)))}
+                    onChange={(e) => setSelectedYear(e.target.value)}
+                    style={{
+                        width: '100%',
+                        cursor: 'pointer',
+                        accentColor: '#0054a4',
+                    }}
+                />
+                <p>Year: {selectedYear || 'Select Year'}</p>
+            </div>
             <div
                 ref={tooltipRef}
                 style={{
@@ -379,22 +400,83 @@ const GeoView3: React.FC = () => {
                     zIndex: 10,
                 }}
             ></div>
-            {selectedArtist && (
-                <>
-                    {renderTable()}
-                    <button
+            {filteredData && (
+                <div
+                    style={{
+                        marginTop: '20px',
+                        width: '90%',
+                        maxHeight: '400px',
+                        overflowY: 'auto',
+                        border: '1px solid #ccc',
+                        borderRadius: '8px',
+                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                        backgroundColor: '#ffffff',
+                    }}
+                >
+                    <table
                         style={{
-                            marginTop: '20px',
-                            padding: '10px 20px',
-                            fontSize: '14px',
-                            cursor: 'pointer',
+                            width: '100%',
+                            borderCollapse: 'collapse',
+                            textAlign: 'left',
+                            color: '#0054a4',
                         }}
-                        onClick={exportTableData}
                     >
-                        Export Table Data
-                    </button>
-                </>
+                        <thead>
+                        <tr style={{ backgroundColor: '#f2f2f2', color: '#0054a4' }}>
+                            <th style={{ padding: '10px', border: '1px solid #ddd' }}>Country</th>
+                            <th style={{ padding: '10px', border: '1px solid #ddd' }}>ISO-3</th>
+                            <th style={{ padding: '10px', border: '1px solid #ddd' }}>Year</th>
+                            <th style={{ padding: '10px', border: '1px solid #ddd' }}>Exhibitions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {Object.values(filteredData).flatMap((yearData) =>
+                            yearData.map((row, index) => (
+                                <tr key={index}>
+                                    <td style={{ padding: '10px', border: '1px solid #ddd' }}>
+                                        {row['e.country']}
+                                    </td>
+                                    <td style={{ padding: '10px', border: '1px solid #ddd' }}>
+                                        {row['e.country_3']}
+                                    </td>
+                                    <td style={{ padding: '10px', border: '1px solid #ddd' }}>
+                                        {row.year}
+                                    </td>
+                                    <td style={{ padding: '10px', border: '1px solid #ddd' }}>
+                                        {row.num_exhibitions}
+                                    </td>
+                                </tr>
+                            ))
+                        )}
+                        </tbody>
+                    </table>
+                </div>
             )}
+            <button
+                style={{
+                    marginTop: '20px',
+                    padding: '10px 20px',
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                    color: '#0054a4',
+                    backgroundColor: '#ffffff',
+                    border: '2px solid #0054a4',
+                    borderRadius: '5px',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                }}
+                onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#0054a4';
+                    e.currentTarget.style.color = '#ffffff';
+                }}
+                onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = '#ffffff';
+                    e.currentTarget.style.color = '#0054a4';
+                }}
+                onClick={exportTableData}
+            >
+                Export Data
+            </button>
         </div>
     );
 };
