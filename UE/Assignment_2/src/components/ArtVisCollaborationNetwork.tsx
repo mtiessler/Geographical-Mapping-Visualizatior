@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo} from 'react';
 import * as d3 from 'd3';
 
 // Expanded type definitions to handle D3 force simulation properly
@@ -27,6 +27,19 @@ const ArtVisCollaborationNetwork: React.FC = () => {
   const tooltipRef = useRef<HTMLDivElement | null>(null);
   const [data, setData] = useState<GraphData | null>(null);
   const [minEdgeWeight, setMinEdgeWeight] = useState<number>(20);
+  
+  const colorScale = useMemo(() => {
+    if (!data) return d3.scaleOrdinal<string>().range(d3.schemeCategory10);
+    
+    const uniqueNationalities = Array.from(
+      new Set(data.nodes.map(d => d.nationality || 'Unknown'))
+    ).sort();
+    
+    return d3
+      .scaleOrdinal<string>()
+      .domain(uniqueNationalities)
+      .range(d3.schemeCategory10);
+  }, [data]);
 
   const fetchCollaborationData = async () => {
     try {
@@ -68,27 +81,25 @@ const ArtVisCollaborationNetwork: React.FC = () => {
   const filteredData = () => {
     if (!data) return { nodes: [], links: [] };
 
+    // First filter links based on weight threshold
     const validLinks = data.links.filter(link => {
-      const sourceId =
-        typeof link.source === 'object' ? link.source.id : link.source;
-      const targetId =
-        typeof link.target === 'object' ? link.target.id : link.target;
-      return (link.weight || 0) >= minEdgeWeight && sourceId !== targetId;
+        const sourceId = typeof link.source === 'object' ? link.source.id : link.source;
+        const targetId = typeof link.target === 'object' ? link.target.id : link.target;
+        return (link.weight || 0) >= minEdgeWeight && sourceId !== targetId;
     });
 
-    const usedNodeIds = new Set(
-      validLinks
-        .flatMap(link => {
-          const sourceId =
-            typeof link.source === 'object' ? link.source.id : link.source;
-          const targetId =
-            typeof link.target === 'object' ? link.target.id : link.target;
-          return [sourceId, targetId];
+    // Get all node IDs that have at least one valid connection
+    const connectedNodeIds = new Set(
+        validLinks.flatMap(link => {
+            const sourceId = typeof link.source === 'object' ? link.source.id : link.source;
+            const targetId = typeof link.target === 'object' ? link.target.id : link.target;
+            return [sourceId, targetId];
         })
-        .filter((id): id is number => typeof id === 'number')
     );
 
-    const validNodes = data.nodes.filter(node => usedNodeIds.has(node.id));
+    // Only include nodes that have at least one valid connection
+    const validNodes = data.nodes.filter(node => connectedNodeIds.has(node.id));
+
     return { nodes: validNodes, links: validLinks };
   };
 
@@ -107,15 +118,6 @@ const ArtVisCollaborationNetwork: React.FC = () => {
     // Make these bigger:
     const width = 1200;
     const height = 700;
-
-    // Build a color scale by nationality (replacing undefined with "Unknown")
-    const uniqueNationalities = Array.from(
-      new Set(nodes.map(d => d.nationality || 'Unknown'))
-    );
-    const colorScale = d3
-      .scaleOrdinal<string>()
-      .domain(uniqueNationalities)
-      .range(d3.schemeCategory10);
 
     // Create the force simulation
     const simulation = d3
@@ -196,14 +198,66 @@ const ArtVisCollaborationNetwork: React.FC = () => {
         return `${firstInitial}${lastInitial}`;
       });
 
-    // Keep existing tooltip functionality but attach to nodeGroups instead
+    // Function to find connected nodes and links for a given node
+    const findConnections = (nodeData: NodeDatum) => {
+      const connectedLinks = links.filter(
+        link =>
+          (link.source as NodeDatum).id === nodeData.id ||
+          (link.target as NodeDatum).id === nodeData.id
+      );
+
+      const connectedNodeIds = new Set(
+        connectedLinks.flatMap(link => [
+          (link.source as NodeDatum).id,
+          (link.target as NodeDatum).id
+        ])
+      );
+      connectedNodeIds.delete(nodeData.id); // Remove self from connected nodes
+
+      const connectedNodes = nodes.filter(node =>
+        connectedNodeIds.has(node.id)
+      );
+
+      return { connectedLinks, connectedNodes };
+    };
+
+    // Enhanced tooltip and hover effects
     const tooltip = d3.select(tooltipRef.current);
     nodeGroups
       .on('mouseover', (event, d) => {
+        const { connectedLinks, connectedNodes } = findConnections(d);
+        
+        // Highlight connected links
+        linkSelection
+          .attr('stroke-opacity', link =>
+            connectedLinks.includes(link) ? 0.8 : 0.1
+          )
+          .attr('stroke', link =>
+            connectedLinks.includes(link) ? '#ff9900' : '#999'
+          );
+
+        // Fixed highlight for connected nodes with proper typing
+        nodeGroups
+          .selectAll<SVGCircleElement, NodeDatum>('circle')
+          .attr('stroke', (node: NodeDatum) =>
+            connectedNodes.some(n => n.id === node.id) ? '#ff9900' : '#fff'
+          )
+          .attr('stroke-width', (node: NodeDatum) =>
+            connectedNodes.some(n => n.id === node.id) ? 3 : 2
+          );
+
+        // Enhanced tooltip content
+        const connectionsList = connectedNodes
+          .map(node => `${node.firstname} ${node.lastname} (${node.nationality})`)
+          .join('<br/>');
+
         tooltip.style('visibility', 'visible').html(`
           <strong>${d.firstname} ${d.lastname}</strong><br/>
           Nationality: ${d.nationality}<br/>
           Total Exhibitions: ${d.exhibitions_count}<br/>
+          <br/>
+          <strong>Connected to ${connectedNodes.length} artists:</strong><br/>
+          ${connectionsList}
         `);
       })
       .on('mousemove', event => {
@@ -212,33 +266,49 @@ const ArtVisCollaborationNetwork: React.FC = () => {
           .style('left', `${event.pageX + 10}px`);
       })
       .on('mouseout', () => {
+        // Reset link appearances
+        linkSelection
+          .attr('stroke', '#999')
+          .attr('stroke-opacity', 0.2);
+
+        // Reset node appearances with proper typing
+        nodeGroups
+          .selectAll<SVGCircleElement, NodeDatum>('circle')
+          .attr('stroke', '#fff')
+          .attr('stroke-width', 2);
+
         tooltip.style('visibility', 'hidden');
       });
 
+
     // Build legend in the top-right
+    const allNationalities = Array.from(
+      new Set(data.nodes.map(d => d.nationality || 'Unknown'))
+    ).sort();
+    
     const legendG = svg
       .append('g')
       .attr('class', 'legend')
       .attr('transform', `translate(${width - 130}, 20)`);
 
-    uniqueNationalities.forEach((nat, i) => {
-      const legendRow = legendG
-        .append('g')
-        .attr('transform', `translate(0, ${i * 20})`);
-
-      legendRow
-        .append('circle')
-        .attr('r', 6)
-        .attr('fill', colorScale(nat));
-
-      legendRow
-        .append('text')
-        .attr('x', 12)
-        .attr('y', 3)
-        .text(nat)
-        .attr('font-size', '12px')
-        .attr('fill', '#333');
-    });
+      allNationalities.forEach((nat, i) => {
+        const legendRow = legendG
+          .append('g')
+          .attr('transform', `translate(0, ${i * 20})`);
+      
+        legendRow
+          .append('circle')
+          .attr('r', 6)
+          .attr('fill', colorScale(nat));
+      
+        legendRow
+          .append('text')
+          .attr('x', 12)
+          .attr('y', 3)
+          .text(nat)
+          .attr('font-size', '12px')
+          .attr('fill', '#333');
+      });
 
     // Zoom
     const zoom = d3
@@ -263,6 +333,18 @@ const ArtVisCollaborationNetwork: React.FC = () => {
 
   return (
     <div className="p-5 flex flex-col items-center">
+      <button
+                  style={{
+                      alignSelf: 'flex-start',
+                      marginBottom: '10px',
+                      padding: '10px 20px',
+                      fontSize: '14px',
+                      cursor: 'pointer',
+                  }}
+                  onClick={() => (window.location.href = '/')}
+              >
+                  Go Back
+      </button>
       <h1 className="text-2xl font-bold mb-4">Artist Collaboration Network</h1>
       <div className="w-full">
         <svg
