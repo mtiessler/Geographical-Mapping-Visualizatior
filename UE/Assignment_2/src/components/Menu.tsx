@@ -13,7 +13,7 @@ const Menu: React.FC = () => {
             </header>
             <div className="menu-buttons">
                 <Link to="/geo-1">
-                    <button className="menu-button view1">Geographical View 1</button>
+                    <button className="menu-button view1">Geographical Heatmap of Exhibitions</button>
                 </Link>
                 <Link to="/geo-2">
                     <button className="menu-button view2">Geographical View 2</button>
