@@ -1,11 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/menu.scss';
+// @ts-ignore
+import tuwienLogo from "../assets/tuwien_logo.png";
 
 const Menu: React.FC = () => {
     return (
         <div className="menu-container">
-            <h1 className="menu-title">IV Assignment 2</h1>
+            <header className="menu-header">
+                <img src={tuwienLogo} alt="TU Wien Logo" className="menu-logo" />
+                <h1 className="menu-title">IV Assignment 2</h1>
+            </header>
             <div className="menu-buttons">
                 <Link to="/geo-1">
                     <button className="menu-button view1">Geographical View 1</button>
