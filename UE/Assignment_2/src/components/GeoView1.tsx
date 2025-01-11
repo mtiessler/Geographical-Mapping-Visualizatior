@@ -261,36 +261,93 @@ const GeoView1 = () => {
             .text('Number of Exhibitions');
     }, [worldMap, data, year, minExhibitions, maxExhibitions]);
 
+
     return (
-        <div style={{padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+        <div
+            style={{
+                padding: '20px',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                minHeight: '100vh', // Allow scrolling for longer pages
+                background: 'linear-gradient(to top, #0054a4, #ffffff)', // Blue-to-white gradient
+                color: '#0054a4', // Blue text
+                fontFamily: 'Arial, sans-serif',
+                overflowY: 'auto', // Enable vertical scrolling for the page
+            }}
+        >
+            {/* Go Back Button */}
             <button
                 style={{
                     alignSelf: 'flex-start',
-                    marginBottom: '10px',
+                    marginBottom: '20px',
                     padding: '10px 20px',
                     fontSize: '14px',
+                    fontWeight: 'bold',
+                    color: '#0054a4', // Blue text
+                    backgroundColor: '#ffffff', // White background
+                    border: '2px solid #0054a4', // Blue border
+                    borderRadius: '5px',
                     cursor: 'pointer',
+                    transition: 'all 0.3s ease',
                 }}
                 onClick={() => (window.location.href = '/')}
+                onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#0054a4';
+                    e.currentTarget.style.color = '#ffffff';
+                }}
+                onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = '#ffffff';
+                    e.currentTarget.style.color = '#0054a4';
+                }}
             >
                 Go Back
             </button>
-            <h1>Geographical Heatmap of Exhibitions</h1>
-            <p style={{maxWidth: '600px', textAlign: 'center', margin: '10px 0'}}>
+
+            {/* Title */}
+            <h1 style={{ color: '#0054a4' }}>Geographical Heatmap of Exhibitions</h1>
+            <p style={{ maxWidth: '600px', textAlign: 'center', margin: '10px 0', color: '#0054a4' }}>
                 This map visualizes the number of exhibitions held in various countries between 1902 and 1915.
                 You are currently viewing data for <strong>{year}</strong>
                 {importantDates.some((date) => date.year === year) && (
-                    <span style={{color: 'red', fontWeight: 'bold'}}>
-                        {' '}({importantDates.find((date) => date.year === year)?.description})
+                    <span style={{ color: 'red', fontWeight: 'bold' }}>
+                        {' '}
+                        ({importantDates.find((date) => date.year === year)?.description})
                     </span>
-                )}.
-                Use the sliders below to explore the data for different years and set the minimum number of exhibitions
+                )}
+                . Use the sliders below to explore the data for different years and set the minimum number of exhibitions
                 required to display a country.
             </p>
-            <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-                <svg ref={svgRef} width={900} height={500} style={{border: '1px solid #ccc'}}></svg>
-                <svg ref={legendRef} width={100} height={350} style={{marginLeft: '10px'}}></svg>
+
+            {/* Map */}
+            <div
+                style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: '#ffffff', // White background for the map
+                    padding: '10px',
+                    borderRadius: '10px',
+                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Subtle shadow for better visibility
+                    width: '100%', // Restrict to the parent container
+                    maxWidth: '1000px', // Reduce maximum width of the map container
+                }}
+            >
+                <svg
+                    ref={svgRef}
+                    width="100%"
+                    height="500px"
+                    style={{ border: '1px solid #ccc', maxWidth: '700px' }}
+                ></svg>
+                <svg
+                    ref={legendRef}
+                    width={100}
+                    height={350}
+                    style={{ marginLeft: '10px' }}
+                ></svg>
             </div>
+
+            {/* Tooltip */}
             <div
                 ref={tooltipRef}
                 style={{
@@ -304,80 +361,173 @@ const GeoView1 = () => {
                     zIndex: 10,
                 }}
             ></div>
-            <div style={{display: 'flex', justifyContent: 'space-around', width: '100%', marginTop: '20px'}}>
-                <div>
+
+            {/* Sliders */}
+            <div
+                style={{
+                    display: 'flex',
+                    justifyContent: 'space-around',
+                    width: '100%',
+                    marginTop: '20px',
+                }}
+            >
+                <div style={{ textAlign: 'center', color: '#0054a4' }}>
                     <input
                         type="range"
                         min="1902"
                         max="1915"
                         value={year}
                         onChange={(e) => setYear(parseInt(e.target.value, 10))}
-                        style={{width: '300px'}}
+                        style={{
+                            width: '300px',
+                            cursor: 'pointer',
+                            accentColor: '#0054a4', // TU Wien blue slider thumb
+                        }}
                     />
-                    <p>Year: {year}</p>
+                    <p style={{ marginTop: '10px', fontWeight: 'bold' }}>Year: {year}</p>
                 </div>
-                <div>
+                <div style={{ textAlign: 'center', color: '#0054a4' }}>
                     <input
                         type="range"
                         min="1"
                         max={maxExhibitions}
                         value={minExhibitions}
-                        onChange={(e) => setMinExhibitions(parseInt(e.target.value, 10))}
-                        style={{width: '300px'}}
+                        onChange={(e) =>
+                            setMinExhibitions(parseInt(e.target.value, 10))
+                        }
+                        style={{
+                            width: '300px',
+                            cursor: 'pointer',
+                            accentColor: '#0054a4', // TU Wien blue slider thumb
+                        }}
                     />
-                    <p>Minimum Exhibitions: {minExhibitions}</p>
+                    <p style={{ marginTop: '10px', fontWeight: 'bold' }}>
+                        Minimum Exhibitions: {minExhibitions}
+                    </p>
                 </div>
             </div>
-            <table style={{marginTop: '20px', borderCollapse: 'collapse', width: '80%', textAlign: 'left'}}>
-                <thead>
-                <tr style={{backgroundColor: '#f2f2f2'}}>
-                    <th style={{padding: '10px', border: '1px solid #ddd'}}>
-                        Country
-                        <button
-                            onClick={() => handleSort('country')}
+
+            {/* Table */}
+            <div
+                style={{
+                    marginTop: '20px',
+                    width: '90%', // Make the table wider
+                    maxHeight: '400px', // Increase table height
+                    overflowY: 'auto', // Enable scrolling for table content
+                    border: '1px solid #ccc',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                    backgroundColor: '#ffffff', // White table background
+                }}
+            >
+                <table
+                    style={{
+                        width: '100%',
+                        borderCollapse: 'collapse',
+                        textAlign: 'left',
+                        color: '#0054a4', // Blue text inside the table
+                    }}
+                >
+                    <thead>
+                    <tr style={{ backgroundColor: '#f2f2f2', color: '#0054a4' }}>
+                        <th
                             style={{
-                                marginLeft: '10px',
-                                backgroundColor: '#ddd',
-                                border: 'none',
-                                cursor: 'pointer',
-                                padding: '5px',
+                                padding: '10px',
+                                border: '1px solid #ddd',
+                                position: 'sticky',
+                                top: 0, // Sticky header for better UX
+                                backgroundColor: '#f2f2f2',
+                                zIndex: 1,
                             }}
                         >
-                            Sort
-                        </button>
-                    </th>
-                    <th style={{padding: '10px', border: '1px solid #ddd'}}>
-                        Exhibitions
-                        <button
-                            onClick={() => handleSort('numExhibitions')}
+                            Country
+                            <button
+                                onClick={() => handleSort('country')}
+                                style={{
+                                    marginLeft: '10px',
+                                    backgroundColor: '#ddd',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    padding: '5px',
+                                    color: '#0054a4', // Blue button text
+                                }}
+                            >
+                                Sort
+                            </button>
+                        </th>
+                        <th
                             style={{
-                                marginLeft: '10px',
-                                backgroundColor: '#ddd',
-                                border: 'none',
-                                cursor: 'pointer',
-                                padding: '5px',
+                                padding: '10px',
+                                border: '1px solid #ddd',
+                                position: 'sticky',
+                                top: 0,
+                                backgroundColor: '#f2f2f2',
+                                zIndex: 1,
                             }}
                         >
-                            Sort
-                        </button>
-                    </th>
-                </tr>
-                </thead>
-                <tbody>
-                {summaryData().map((entry, index) => (
-                    <tr key={index}>
-                        <td style={{padding: '10px', border: '1px solid #ddd'}}>{entry.country}</td>
-                        <td style={{padding: '10px', border: '1px solid #ddd'}}>{entry.numExhibitions}</td>
+                            Exhibitions
+                            <button
+                                onClick={() => handleSort('numExhibitions')}
+                                style={{
+                                    marginLeft: '10px',
+                                    backgroundColor: '#ddd',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    padding: '5px',
+                                    color: '#0054a4', // Blue button text
+                                }}
+                            >
+                                Sort
+                            </button>
+                        </th>
                     </tr>
-                ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                    {summaryData().map((entry, index) => (
+                        <tr key={index}>
+                            <td
+                                style={{
+                                    padding: '10px',
+                                    border: '1px solid #ddd',
+                                }}
+                            >
+                                {entry.country}
+                            </td>
+                            <td
+                                style={{
+                                    padding: '10px',
+                                    border: '1px solid #ddd',
+                                }}
+                            >
+                                {entry.numExhibitions}
+                            </td>
+                        </tr>
+                    ))}
+                    </tbody>
+                </table>
+            </div>
+
+            {/* Export Data Button */}
             <button
                 style={{
                     marginTop: '20px',
                     padding: '10px 20px',
                     fontSize: '14px',
+                    fontWeight: 'bold',
+                    color: '#0054a4', // Blue text
+                    backgroundColor: '#ffffff', // White background
+                    border: '2px solid #0054a4',
+                    borderRadius: '5px',
                     cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                }}
+                onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#0054a4';
+                    e.currentTarget.style.color = '#ffffff';
+                }}
+                onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = '#ffffff';
+                    e.currentTarget.style.color = '#0054a4';
                 }}
                 onClick={exportData}
             >
@@ -386,5 +536,6 @@ const GeoView1 = () => {
         </div>
     );
 };
+
 
 export default GeoView1;
