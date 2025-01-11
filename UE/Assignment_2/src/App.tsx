@@ -4,7 +4,7 @@ import Menu from './components/Menu';
 import GeoView1 from './components/GeoView1';
 import GeoView2 from './components/GeoView2';
 import GeoView3 from './components/GeoView3';
-import GraphView from './components/GraphView';
+import GraphView from './components/ArtVisCollaborationNetwork';
 import './styles/app.scss';
 
 function App() {
