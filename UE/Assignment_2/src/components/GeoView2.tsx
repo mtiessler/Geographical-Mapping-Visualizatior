@@ -3,7 +3,14 @@ import * as d3 from 'd3';
 import * as topojson from 'topojson-client';
 import { FeatureCollection, Geometry } from 'geojson';
 
-const nameToIsoA3Map = {
+interface ExhibitionData {
+    artist_name: string;
+    'e.country': string;
+    'e.country_3': string;
+    num_exhibitions: number;
+}
+
+const nameToIsoA3Map: Record<string, string> = {
     Germany: 'DEU',
     Austria: 'AUT',
     Belgium: 'BEL',
@@ -26,19 +33,17 @@ const nameToIsoA3Map = {
 };
 
 const GeoView2 = () => {
-    const svgRef = useRef(null);
-    const legendRef = useRef(null);
-    const tooltipRef = useRef(null);
-    const [selectedArtist, setSelectedArtist] = useState('Edouard Vuillard');
-    const [worldMap, setWorldMap] = useState(null);
-    const [data, setData] = useState(null);
-    const [artists, setArtists] = useState([]);
+    const svgRef = useRef<SVGSVGElement | null>(null);
+    const legendRef = useRef<SVGSVGElement | null>(null);
+    const tooltipRef = useRef<HTMLDivElement | null>(null);
+    const [selectedArtist, setSelectedArtist] = useState<string>('Edouard Vuillard');
+    const [worldMap, setWorldMap] = useState<any>(null);
+    const [data, setData] = useState<ExhibitionData[] | null>(null);
+    const [artists, setArtists] = useState<string[]>([]);
 
     const fetchWorldMap = async () => {
         try {
-            const response = await fetch(
-                'https://unpkg.com/world-atlas@2.0.2/countries-110m.json'
-            );
+            const response = await fetch('https://unpkg.com/world-atlas@2.0.2/countries-110m.json');
             if (!response.ok) throw new Error('Failed to fetch world map');
             return await response.json();
         } catch (error) {
@@ -47,11 +52,11 @@ const GeoView2 = () => {
         }
     };
 
-    const fetchData = async () => {
+    const fetchData = async (): Promise<ExhibitionData[] | null> => {
         try {
             const response = await fetch('/data/map_df_filtered.json');
             if (!response.ok) throw new Error('Failed to fetch data');
-            const exhibitionData = await response.json();
+            const exhibitionData: ExhibitionData[] = await response.json();
 
             const artistNames = [...new Set(exhibitionData.map((d) => d.artist_name))];
             setArtists(artistNames);
@@ -73,15 +78,15 @@ const GeoView2 = () => {
         loadData();
     }, []);
 
-    const filteredData = () => {
+    const filteredData = (): ExhibitionData[] => {
         if (!data) return [];
         return data.filter((entry) => entry.artist_name === selectedArtist);
     };
 
     const exportTableData = () => {
-        const tableData = filteredData().map(entry => ({
+        const tableData = filteredData().map((entry) => ({
             Country: entry['e.country'],
-            Exhibitions: entry.num_exhibitions
+            Exhibitions: entry.num_exhibitions,
         }));
         const blob = new Blob([JSON.stringify(tableData, null, 2)], { type: 'application/json' });
         const link = document.createElement('a');
@@ -109,13 +114,10 @@ const GeoView2 = () => {
         const projection = d3.geoMercator().fitSize([width, height], geoJSON);
         const pathGenerator = d3.geoPath().projection(projection);
 
-        // Set a fixed color scale across all artists
-        const maxExhibitionsOverall = Math.max(
-            ...data.map((d) => d.num_exhibitions)
-        );
+        const maxExhibitionsOverall = Math.max(...data.map((d) => d.num_exhibitions));
 
         const colorScale = d3
-            .scaleSequentialLog(d3.interpolateReds) // Use the "Reds" color scheme to match the desired gradient
+            .scaleSequentialLog(d3.interpolateReds)
             .domain([1, maxExhibitionsOverall]);
 
         const g = svg.append('g');
@@ -126,7 +128,8 @@ const GeoView2 = () => {
             .append('path')
             .attr('d', pathGenerator as any)
             .attr('fill', (d: any) => {
-                const countryCode = d.properties?.iso_a3 || nameToIsoA3Map[d.properties?.name];
+                const countryCode =
+                    d.properties?.iso_a3 || nameToIsoA3Map[d.properties?.name as keyof typeof nameToIsoA3Map];
                 if (!countryCode) return '#ccc';
                 const countryData = filteredData().find(
                     (entry) => entry['e.country_3'] === countryCode
@@ -137,21 +140,20 @@ const GeoView2 = () => {
             .attr('stroke', '#ffffff')
             .on('mouseover', (event, d: any) => {
                 const countryName = d.properties?.name || 'Unknown';
-                const countryCode = d.properties?.iso_a3 || nameToIsoA3Map[d.properties?.name];
+                const countryCode =
+                    d.properties?.iso_a3 || nameToIsoA3Map[d.properties?.name as keyof typeof nameToIsoA3Map];
                 const countryData = filteredData().find(
                     (entry) => entry['e.country_3'] === countryCode
                 );
                 const numExhibitions = countryData?.num_exhibitions || 0;
 
-                tooltip.style('visibility', 'visible')
-                    .html(`
-                        <strong>${countryName}</strong><br>
-                        Exhibitions: ${numExhibitions}
-                    `);
+                tooltip.style('visibility', 'visible').html(`
+                    <strong>${countryName}</strong><br>
+                    Exhibitions: ${numExhibitions}
+                `);
             })
             .on('mousemove', (event) => {
-                tooltip.style('top', `${event.pageY + 10}px`)
-                    .style('left', `${event.pageX + 10}px`);
+                tooltip.style('top', `${event.pageY + 10}px`).style('left', `${event.pageX + 10}px`);
             })
             .on('mouseout', () => {
                 tooltip.style('visibility', 'hidden');
@@ -179,14 +181,12 @@ const GeoView2 = () => {
             .attr('y1', '100%')
             .attr('y2', '0%');
 
-        const gradientStops = d3
-            .range(0, 1.1, 0.1)
-            .map((t) => ({
-                t,
-                color: colorScale(
-                    colorScale.domain()[0] * (colorScale.domain()[1] / colorScale.domain()[0]) ** t
-                ),
-            }));
+        const gradientStops = d3.range(0, 1.1, 0.1).map((t) => ({
+            t,
+            color: colorScale(
+                colorScale.domain()[0] * (colorScale.domain()[1] / colorScale.domain()[0]) ** t
+            ),
+        }));
 
         gradient
             .selectAll('stop')
@@ -204,10 +204,7 @@ const GeoView2 = () => {
             .attr('x', 0)
             .attr('y', 20);
 
-        legend
-            .append('g')
-            .attr('transform', `translate(${legendWidth}, 20)`)
-            .call(legendAxis);
+        legend.append('g').attr('transform', `translate(${legendWidth}, 20)`).call(legendAxis);
 
         legend
             .append('text')
@@ -219,7 +216,7 @@ const GeoView2 = () => {
     }, [worldMap, data, selectedArtist]);
 
     return (
-        <div style={{padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+        <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <button
                 style={{
                     alignSelf: 'flex-start',
@@ -233,15 +230,15 @@ const GeoView2 = () => {
                 Go Back
             </button>
             <h1>Geographical Heatmap of Exhibitions</h1>
-            <p style={{maxWidth: '600px', textAlign: 'center', margin: '10px 0'}}>
-                This map visualizes the number of exhibitions held in various countries by artist.
-                You are currently viewing data for <strong>{selectedArtist}</strong>.
-                Use the dropdown below to select a different artist.
+            <p style={{ maxWidth: '600px', textAlign: 'center', margin: '10px 0' }}>
+                This map visualizes the number of exhibitions held in various countries by artist. You are
+                currently viewing data for <strong>{selectedArtist}</strong>. Use the dropdown below to
+                select a different artist.
             </p>
             <select
                 value={selectedArtist}
                 onChange={(e) => setSelectedArtist(e.target.value)}
-                style={{marginBottom: '20px', padding: '10px', fontSize: '14px'}}
+                style={{ marginBottom: '20px', padding: '10px', fontSize: '14px' }}
             >
                 {artists.map((artist) => (
                     <option key={artist} value={artist}>
@@ -249,9 +246,9 @@ const GeoView2 = () => {
                     </option>
                 ))}
             </select>
-            <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-                <svg ref={svgRef} width={900} height={500} style={{border: '1px solid #ccc'}}></svg>
-                <svg ref={legendRef} width={100} height={350} style={{marginLeft: '10px'}}></svg>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <svg ref={svgRef} width={900} height={500} style={{ border: '1px solid #ccc' }}></svg>
+                <svg ref={legendRef} width={100} height={350} style={{ marginLeft: '10px' }}></svg>
             </div>
             <div
                 ref={tooltipRef}
@@ -266,18 +263,18 @@ const GeoView2 = () => {
                     zIndex: 10,
                 }}
             ></div>
-            <table style={{marginTop: '20px', borderCollapse: 'collapse', width: '80%', textAlign: 'left'}}>
+            <table style={{ marginTop: '20px', borderCollapse: 'collapse', width: '80%', textAlign: 'left' }}>
                 <thead>
-                <tr style={{backgroundColor: '#f2f2f2'}}>
-                    <th style={{padding: '10px', border: '1px solid #ddd'}}>Country</th>
-                    <th style={{padding: '10px', border: '1px solid #ddd'}}>Exhibitions</th>
+                <tr style={{ backgroundColor: '#f2f2f2' }}>
+                    <th style={{ padding: '10px', border: '1px solid #ddd' }}>Country</th>
+                    <th style={{ padding: '10px', border: '1px solid #ddd' }}>Exhibitions</th>
                 </tr>
                 </thead>
                 <tbody>
                 {filteredData().map((entry, index) => (
                     <tr key={index}>
-                        <td style={{padding: '10px', border: '1px solid #ddd'}}>{entry['e.country']}</td>
-                        <td style={{padding: '10px', border: '1px solid #ddd'}}>{entry.num_exhibitions}</td>
+                        <td style={{ padding: '10px', border: '1px solid #ddd' }}>{entry['e.country']}</td>
+                        <td style={{ padding: '10px', border: '1px solid #ddd' }}>{entry.num_exhibitions}</td>
                     </tr>
                 ))}
                 </tbody>
@@ -298,5 +295,3 @@ const GeoView2 = () => {
 };
 
 export default GeoView2;
-
-

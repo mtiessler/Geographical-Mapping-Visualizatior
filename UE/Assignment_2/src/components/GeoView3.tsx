@@ -3,7 +3,22 @@ import * as d3 from 'd3';
 import * as topojson from 'topojson-client';
 import { FeatureCollection, Geometry } from 'geojson';
 
-const nameToIsoA3Map = {
+interface CountryData {
+    'e.country': string;
+    'e.country_3': string;
+    num_exhibitions: number;
+    year?: string;
+}
+
+interface ArtistYearData {
+    [year: string]: CountryData[];
+}
+
+interface ArtistData {
+    [artist: string]: ArtistYearData;
+}
+
+const nameToIsoA3Map: Record<string, string> = {
     Germany: 'DEU',
     Austria: 'AUT',
     Belgium: 'BEL',
@@ -26,23 +41,21 @@ const nameToIsoA3Map = {
     Unknown: 'Unknown',
 };
 
-const GeoView3 = () => {
-    const svgRef = useRef(null);
-    const legendRef = useRef(null);
-    const tooltipRef = useRef(null);
-    const [selectedArtist, setSelectedArtist] = useState(null);
-    const [selectedYear, setSelectedYear] = useState(null);
-    const [worldMap, setWorldMap] = useState(null);
-    const [data, setData] = useState(null);
-    const [filteredData, setFilteredData] = useState([]);
-    const [artists, setArtists] = useState([]);
-    const [years, setYears] = useState([]);
+const GeoView3: React.FC = () => {
+    const svgRef = useRef<SVGSVGElement | null>(null);
+    const legendRef = useRef<SVGSVGElement | null>(null);
+    const tooltipRef = useRef<HTMLDivElement | null>(null);
+    const [selectedArtist, setSelectedArtist] = useState<string | null>(null);
+    const [selectedYear, setSelectedYear] = useState<string | null>(null);
+    const [worldMap, setWorldMap] = useState<any>(null);
+    const [data, setData] = useState<ArtistData | null>(null);
+    const [filteredData, setFilteredData] = useState<Record<string, CountryData[]> | null>(null);
+    const [artists, setArtists] = useState<string[]>([]);
+    const [years, setYears] = useState<string[]>([]);
 
-    const fetchWorldMap = async () => {
+    const fetchWorldMap = async (): Promise<any> => {
         try {
-            const response = await fetch(
-                'https://unpkg.com/world-atlas@2.0.2/countries-110m.json'
-            );
+            const response = await fetch('https://unpkg.com/world-atlas@2.0.2/countries-110m.json');
             if (!response.ok) throw new Error('Failed to fetch world map');
             return await response.json();
         } catch (error) {
@@ -51,16 +64,15 @@ const GeoView3 = () => {
         }
     };
 
-    const fetchData = async () => {
+    const fetchData = async (): Promise<void> => {
         try {
             const response = await fetch('/data/year_artist_data.json');
             if (!response.ok) throw new Error('Failed to fetch data');
-            const jsonData = await response.json();
+            const jsonData: ArtistData = await response.json();
             setArtists(Object.keys(jsonData));
             setData(jsonData);
         } catch (error) {
             console.error('Error fetching data:', error);
-            return null;
         }
     };
 
@@ -73,19 +85,22 @@ const GeoView3 = () => {
         loadData();
     }, []);
 
-    const filterByArtist = (artist) => {
+    const filterByArtist = (artist: string | null): void => {
         if (!artist || !data || !data[artist]) {
-            setFilteredData([]);
+            setFilteredData(null);
+            setYears([]);
             return;
         }
 
         const artistData = data[artist];
 
-        const filtered = Object.keys(artistData).reduce((acc, year) => {
-            const yearData = artistData[year].map(entry => ({
-                ...entry,
-                year
-            })).filter(entry => entry["e.country_3"] && entry.num_exhibitions > 0);
+        const filtered = Object.keys(artistData).reduce<Record<string, CountryData[]>>((acc, year) => {
+            const yearData = artistData[year]
+                .map((entry) => ({
+                    ...entry,
+                    year,
+                }))
+                .filter((entry) => entry['e.country_3'] && entry.num_exhibitions > 0);
 
             if (yearData.length > 0) {
                 acc[year] = yearData;
@@ -98,13 +113,20 @@ const GeoView3 = () => {
         setSelectedYear(null); // Reset year selection when the artist changes
     };
 
-    const exportTableData = () => {
-        const rows = Object.values(filteredData || {}).flatMap(yearData => yearData);
+    const exportTableData = (): void => {
+        if (!filteredData) return;
+
+        const rows = Object.values(filteredData).flatMap((yearData) => yearData);
         const csvContent = [
             ['Country', 'ISO-3', 'Year', 'Exhibitions'],
-            ...rows.map(row => [row["e.country"] || 'Unknown', row["e.country_3"] || 'Unknown', row.year || 'Unknown', row.num_exhibitions || 0])
+            ...rows.map((row) => [
+                row['e.country'] || 'Unknown',
+                row['e.country_3'] || 'Unknown',
+                row.year || 'Unknown',
+                row.num_exhibitions || 0,
+            ]),
         ]
-            .map(e => e.join(','))
+            .map((e) => e.join(','))
             .join('\n');
 
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -120,7 +142,7 @@ const GeoView3 = () => {
         if (selectedArtist) {
             filterByArtist(selectedArtist);
         } else {
-            setFilteredData([]);
+            setFilteredData(null);
             setYears([]);
         }
     }, [selectedArtist]);
@@ -141,50 +163,54 @@ const GeoView3 = () => {
             worldMap.objects.countries
         ) as unknown as FeatureCollection<Geometry>;
 
-        const filteredYearData = selectedYear ? filteredData[selectedYear] : Object.values(filteredData).flat();
+        const filteredYearData = selectedYear
+            ? filteredData[selectedYear]
+            : Object.values(filteredData).flat();
 
         const maxExhibitions = Math.max(
-            ...Object.values(data || {}).flatMap(artistData =>
-                Object.values(artistData).flatMap(yearData =>
-                    yearData.map(entry => entry.num_exhibitions)
+            ...Object.values(data || {})
+                .flatMap((artistData) =>
+                    Object.values(artistData).flatMap((yearData) =>
+                        yearData.map((entry) => entry.num_exhibitions)
+                    )
                 )
-            )
         );
 
-        const colorScale = d3
-            .scaleSequentialLog(d3.interpolateReds)
-            .domain([1, maxExhibitions]);
+        const colorScale = d3.scaleSequentialLog(d3.interpolateReds).domain([1, maxExhibitions]);
 
-        const g = svg.append('g');
-
-        g.selectAll('path')
+        svg.append('g')
+            .selectAll('path')
             .data(geoJSON.features)
             .enter()
             .append('path')
             .attr('d', d3.geoPath().projection(d3.geoMercator().fitSize([width, height], geoJSON)))
             .attr('fill', (d: any) => {
-                const countryCode = d.properties?.iso_a3 || nameToIsoA3Map[d.properties?.name];
+                const countryCode =
+                    d.properties?.iso_a3 || nameToIsoA3Map[d.properties?.name as keyof typeof nameToIsoA3Map];
                 if (!countryCode) return '#ccc';
-                const countryData = filteredYearData.find(entry => entry["e.country_3"] === countryCode);
+                const countryData = filteredYearData.find(
+                    (entry) => entry['e.country_3'] === countryCode
+                );
                 const numExhibitions = countryData?.num_exhibitions || 0;
                 return numExhibitions > 0 ? colorScale(numExhibitions) : '#ccc';
             })
             .attr('stroke', '#ffffff')
             .on('mouseover', (event, d: any) => {
                 const countryName = d.properties?.name || 'Unknown';
-                const countryCode = d.properties?.iso_a3 || nameToIsoA3Map[d.properties?.name];
-                const countryData = filteredYearData.find(entry => entry["e.country_3"] === countryCode);
+                const countryCode =
+                    d.properties?.iso_a3 || nameToIsoA3Map[d.properties?.name as keyof typeof nameToIsoA3Map];
+                const countryData = filteredYearData.find(
+                    (entry) => entry['e.country_3'] === countryCode
+                );
                 const numExhibitions = countryData?.num_exhibitions || 0;
 
-                tooltip.style('visibility', 'visible')
-                    .html(`
-                        <strong>${countryName}</strong><br>
-                        Exhibitions: ${numExhibitions}
-                    `);
+                tooltip.style('visibility', 'visible').html(`
+                    <strong>${countryName}</strong><br>
+                    Exhibitions: ${numExhibitions}
+                `);
             })
             .on('mousemove', (event) => {
-                tooltip.style('top', `${event.pageY + 10}px`)
-                    .style('left', `${event.pageX + 10}px`);
+                tooltip.style('top', `${event.pageY + 10}px`).style('left', `${event.pageX + 10}px`);
             })
             .on('mouseout', () => {
                 tooltip.style('visibility', 'hidden');
@@ -212,22 +238,20 @@ const GeoView3 = () => {
             .attr('y1', '100%')
             .attr('y2', '0%');
 
-        const gradientStops = d3
-            .range(0, 1.1, 0.1)
-            .map(t => ({
-                t,
-                color: colorScale(
-                    colorScale.domain()[0] * (colorScale.domain()[1] / colorScale.domain()[0]) ** t
-                )
-            }));
+        const gradientStops = d3.range(0, 1.1, 0.1).map((t) => ({
+            t,
+            color: colorScale(
+                colorScale.domain()[0] * (colorScale.domain()[1] / colorScale.domain()[0]) ** t
+            ),
+        }));
 
         gradient
             .selectAll('stop')
             .data(gradientStops)
             .enter()
             .append('stop')
-            .attr('offset', d => `${d.t * 100}%`)
-            .attr('stop-color', d => d.color);
+            .attr('offset', (d) => `${d.t * 100}%`)
+            .attr('stop-color', (d) => d.color);
 
         legend
             .append('rect')
@@ -237,10 +261,7 @@ const GeoView3 = () => {
             .attr('x', 0)
             .attr('y', 20);
 
-        legend
-            .append('g')
-            .attr('transform', `translate(${legendWidth}, 20)`)
-            .call(legendAxis);
+        legend.append('g').attr('transform', `translate(${legendWidth}, 20)`).call(legendAxis);
 
         legend
             .append('text')
@@ -251,39 +272,39 @@ const GeoView3 = () => {
             .text('Number of Exhibitions');
     }, [worldMap, filteredData, selectedYear]);
 
-    const renderTable = () => {
+    const renderTable = (): JSX.Element => {
         if (!filteredData || Object.keys(filteredData).length === 0) {
             return <p>No data available for the selected artist.</p>;
         }
 
-        const rows = Object.values(filteredData || {}).flatMap(yearData =>
-            yearData.map(row => ({
-                country: row["e.country"] || 'Unknown',
-                iso3: row["e.country_3"] || 'Unknown',
+        const rows = Object.values(filteredData).flatMap((yearData) =>
+            yearData.map((row) => ({
+                country: row['e.country'] || 'Unknown',
+                iso3: row['e.country_3'] || 'Unknown',
                 year: row.year || 'Unknown',
-                exhibitions: row.num_exhibitions || 0
+                exhibitions: row.num_exhibitions || 0,
             }))
         );
 
         return (
             <table style={{ marginTop: '20px', borderCollapse: 'collapse', width: '80%', textAlign: 'left' }}>
                 <thead>
-                    <tr style={{ backgroundColor: '#f2f2f2' }}>
-                        <th style={{ padding: '10px', border: '1px solid #ddd' }}>Country</th>
-                        <th style={{ padding: '10px', border: '1px solid #ddd' }}>ISO-3</th>
-                        <th style={{ padding: '10px', border: '1px solid #ddd' }}>Year</th>
-                        <th style={{ padding: '10px', border: '1px solid #ddd' }}>Exhibitions</th>
-                    </tr>
+                <tr style={{ backgroundColor: '#f2f2f2' }}>
+                    <th style={{ padding: '10px', border: '1px solid #ddd' }}>Country</th>
+                    <th style={{ padding: '10px', border: '1px solid #ddd' }}>ISO-3</th>
+                    <th style={{ padding: '10px', border: '1px solid #ddd' }}>Year</th>
+                    <th style={{ padding: '10px', border: '1px solid #ddd' }}>Exhibitions</th>
+                </tr>
                 </thead>
                 <tbody>
-                    {rows.map((row, index) => (
-                        <tr key={index}>
-                            <td style={{ padding: '10px', border: '1px solid #ddd' }}>{row.country}</td>
-                            <td style={{ padding: '10px', border: '1px solid #ddd' }}>{row.iso3}</td>
-                            <td style={{ padding: '10px', border: '1px solid #ddd' }}>{row.year}</td>
-                            <td style={{ padding: '10px', border: '1px solid #ddd' }}>{row.exhibitions}</td>
-                        </tr>
-                    ))}
+                {rows.map((row, index) => (
+                    <tr key={index}>
+                        <td style={{ padding: '10px', border: '1px solid #ddd' }}>{row.country}</td>
+                        <td style={{ padding: '10px', border: '1px solid #ddd' }}>{row.iso3}</td>
+                        <td style={{ padding: '10px', border: '1px solid #ddd' }}>{row.year}</td>
+                        <td style={{ padding: '10px', border: '1px solid #ddd' }}>{row.exhibitions}</td>
+                    </tr>
+                ))}
                 </tbody>
             </table>
         );
@@ -305,16 +326,21 @@ const GeoView3 = () => {
             </button>
             <h1>Geographical Heatmap of Exhibitions</h1>
             <p style={{ maxWidth: '600px', textAlign: 'center', margin: '10px 0' }}>
-                This map visualizes the number of exhibitions held in various countries. Select an artist to view data.
+                This map visualizes the number of exhibitions held in various countries. Select an artist to view
+                data.
             </p>
             <select
                 value={selectedArtist || ''}
                 onChange={(e) => setSelectedArtist(e.target.value)}
                 style={{ marginBottom: '20px', padding: '10px', fontSize: '14px' }}
             >
-                <option value="" disabled>Select an artist</option>
-                {artists.map(artist => (
-                    <option key={artist} value={artist}>{artist}</option>
+                <option value="" disabled>
+                    Select an artist
+                </option>
+                {artists.map((artist) => (
+                    <option key={artist} value={artist}>
+                        {artist}
+                    </option>
                 ))}
             </select>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -325,15 +351,17 @@ const GeoView3 = () => {
                 <div style={{ width: '80%', marginTop: '20px' }}>
                     <input
                         type="range"
-                        min={Math.min(...years)}
-                        max={Math.max(...years)}
-                        value={selectedYear || Math.min(...years)}
+                        min={Math.min(...years.map((year) => parseInt(year)))}
+                        max={Math.max(...years.map((year) => parseInt(year)))}
+                        value={selectedYear ? parseInt(selectedYear) : Math.min(...years.map((year) => parseInt(year)))}
                         onChange={(e) => setSelectedYear(e.target.value)}
                         style={{ width: '100%' }}
                     />
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        {years.map(year => (
-                            <span key={year} style={{ fontSize: '12px' }}>{year}</span>
+                        {years.map((year) => (
+                            <span key={year} style={{ fontSize: '12px' }}>
+                    {year}
+                </span>
                         ))}
                     </div>
                 </div>
