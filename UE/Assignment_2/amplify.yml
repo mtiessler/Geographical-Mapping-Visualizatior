@@ -1,0 +1,19 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - cd UE/Assignment_2  # Navigate to the correct folder
+        - nvm install 20  # Install Node.js version 20
+        - nvm use 20  # Use Node.js version 20
+        - npm install
+    build:
+      commands:
+        - npm run build
+  artifacts:
+    baseDirectory: UE/Assignment_2/build  # Correct path to the build output
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - UE/Assignment_2/node_modules/**/*  # Correct path to cache node_modules

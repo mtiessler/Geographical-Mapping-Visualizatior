@@ -22,16 +22,3 @@ jobs:
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/iv-assignment-2:latest .
           docker push ${{ secrets.DOCKER_USERNAME }}/iv-assignment-2:latest
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build-and-push
-    steps:
-      - name: Deploy to AWS Amplify
-        uses: aws-actions/aws-amplify-deploy@v1
-        with:
-          app-id: ${{ secrets.AWS_AMPLIFY_APP_ID }}
-          branch: master
-          region: ${{ secrets.AWS_REGION }}
-          access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
