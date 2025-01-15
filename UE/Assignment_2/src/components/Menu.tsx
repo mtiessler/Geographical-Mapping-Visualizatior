@@ -27,19 +27,19 @@ const Menu: React.FC = () => {
             </div>
             <div className="mt-5 menu-placeholders">
                 <div className="placeholder-row">
-                    <p><strong>Name 1:</strong> Enter Name 1</p>
-                    <p><strong>Surname 1:</strong> Enter Surname 1</p>
-                    <p><strong>Matriculation 1:</strong> Enter Matriculation 1</p>
+                    <p><strong>Name 1:</strong> Irene </p>
+                    <p><strong>Surname 1:</strong>Garcia Villoria</p>
+                    <p><strong>Matriculation 1:</strong> 12404282</p>
                 </div>
                 <div className="placeholder-row">
-                    <p><strong>Name 2:</strong> Enter Name 2</p>
-                    <p><strong>Surname 2:</strong> Enter Surname 2</p>
-                    <p><strong>Matriculation 2:</strong> Enter Matriculation 2</p>
+                    <p><strong>Name 2:</strong>Max</p>
+                    <p><strong>Surname 2:</strong>Tiessler</p>
+                    <p><strong>Matriculation 2:</strong> 12234573</p>
                 </div>
                 <div className="placeholder-row">
-                    <p><strong>Name 3:</strong> Enter Name 3</p>
-                    <p><strong>Surname 3:</strong> Enter Surname 3</p>
-                    <p><strong>Matriculation 3:</strong> Enter Matriculation 3</p>
+                    <p><strong>Name 3:</strong>Dennis</p>
+                    <p><strong>Surname 3:</strong>Toma</p>
+                    <p><strong>Matriculation 3:</strong>12329504</p>
                 </div>
             </div>
         </div>
