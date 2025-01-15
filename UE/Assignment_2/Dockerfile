@@ -1,16 +1,16 @@
 FROM node:20-alpine
 
-WORKDIR /app
+WORKDIR /IV-ASSIGNMENT-2
 
-COPY package*.json ./
+COPY public/ /IV-ASSIGNMENT-2/public
+COPY src/ /IV-ASSIGNMENT-2/src
+COPY package.json /IV-ASSIGNMENT-2/
+
 
 RUN npm install
 
 COPY . .
 
-ENV PORT=3000
+EXPOSE 8000
 
-EXPOSE 3000
-
-# Start the application
-CMD ["npm", "start"]
+CMD ["npm", "start", "--", "--port", "8000"]
