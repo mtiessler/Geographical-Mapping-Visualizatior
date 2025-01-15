@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  iv-assignment-2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - PORT=8000
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./public:/IV-ASSIGNMENT-2/public
+      - ./src:/IV-ASSIGNMENT-2/src
+      - ./package.json:/IV-ASSIGNMENT-2/package.json
+      - ./node_modules:/IV-ASSIGNMENT-2/node_modules
+      - .:/IV-ASSIGNMENT-2
+    command: ["npm", "start"]
