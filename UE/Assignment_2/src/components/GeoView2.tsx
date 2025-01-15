@@ -40,6 +40,7 @@ const GeoView2 = () => {
     const [worldMap, setWorldMap] = useState<any>(null);
     const [data, setData] = useState<ExhibitionData[] | null>(null);
     const [artists, setArtists] = useState<string[]>([]);
+    const [sortConfig, setSortConfig] = useState<{ key: 'country' | 'num_exhibitions'; direction: 'asc' | 'desc' } | null>(null);
 
     const fetchWorldMap = async () => {
         try {
@@ -51,6 +52,9 @@ const GeoView2 = () => {
             return null;
         }
     };
+    useEffect(() => {
+        setSortConfig(null); // Reset the sort configuration when the artist changes
+    }, [selectedArtist]);
 
     const fetchData = async (): Promise<ExhibitionData[] | null> => {
         try {
@@ -94,6 +98,26 @@ const GeoView2 = () => {
         link.download = `${selectedArtist}_exhibitions.json`;
         link.click();
     };
+    const handleSort = (key: 'country' | 'num_exhibitions') => {
+        let direction: 'asc' | 'desc' = 'asc';
+        if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
+            direction = 'desc';
+        }
+        setSortConfig({ key, direction });
+    };
+
+    const sortedData = React.useMemo(() => {
+        if (!sortConfig) return filteredData();
+        return [...filteredData()].sort((a, b) => {
+            const key = sortConfig.key;
+            const aValue = key === 'country' ? a['e.country'] : a.num_exhibitions;
+            const bValue = key === 'country' ? b['e.country'] : b.num_exhibitions;
+
+            if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
+            if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
+            return 0;
+        });
+    }, [sortConfig, filteredData]);
 
     useEffect(() => {
         if (!worldMap || !data || !svgRef.current) return;
@@ -232,7 +256,6 @@ const GeoView2 = () => {
                 flexDirection: 'column',
                 alignItems: 'center',
                 minHeight: '100vh',
-                background: 'linear-gradient(to top, #0054a4, #ffffff)',
                 color: '#0054a4',
                 fontFamily: 'Arial, sans-serif',
                 overflowY: 'auto',
@@ -265,8 +288,8 @@ const GeoView2 = () => {
                 Go Back
             </button>
 
-            <h1 style={{ color: '#0054a4' }}>Geographical Heatmap of Exhibitions</h1>
-            <p style={{ maxWidth: '600px', textAlign: 'center', margin: '10px 0', color: '#0054a4' }}>
+            <h1 style={{color: '#0054a4'}}>Geographical Heatmap of Exhibitions</h1>
+            <p style={{maxWidth: '600px', textAlign: 'center', margin: '10px 0', color: '#0054a4'}}>
                 This map visualizes the number of exhibitions held in various countries by artist.
                 You are currently viewing data for <strong>{selectedArtist}</strong>.
                 Use the dropdown below to select a different artist.
@@ -309,27 +332,33 @@ const GeoView2 = () => {
                     ref={svgRef}
                     width="100%"
                     height="500px"
-                    style={{ border: '1px solid #ccc', maxWidth: '700px' }}
+                    style={{border: '1px solid #ccc', maxWidth: '700px'}}
                 ></svg>
                 <svg
                     ref={legendRef}
                     width={100}
                     height={350}
-                    style={{ marginLeft: '10px' }}
+                    style={{marginLeft: '10px'}}
                 ></svg>
             </div>
+            <div style={{
+                marginTop: '50px',
 
+            }}></div>
             <div
                 style={{
-                    marginTop: '20px',
-                    width: '90%',
-                    maxHeight: '400px',
-                    overflow: 'auto',
+                    marginTop: '50px',
+                    width: '80%',
+                    maxWidth: '600px',
+                    margin: '0 auto',
+                    overflowY: 'auto',
                     border: '1px solid #ccc',
                     borderRadius: '8px',
+                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
                     backgroundColor: '#ffffff',
                 }}
             >
+
                 <table
                     style={{
                         width: '100%',
@@ -339,7 +368,7 @@ const GeoView2 = () => {
                     }}
                 >
                     <thead>
-                    <tr style={{ backgroundColor: '#f2f2f2', color: '#0054a4' }}>
+                    <tr style={{backgroundColor: '#f2f2f2', color: '#0054a4'}}>
                         <th
                             style={{
                                 padding: '10px',
@@ -351,6 +380,19 @@ const GeoView2 = () => {
                             }}
                         >
                             Country
+                            <button
+                                onClick={() => handleSort('country')}
+                                style={{
+                                    marginLeft: '10px',
+                                    backgroundColor: '#ddd',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    padding: '5px',
+                                    color: '#0054a4',
+                                }}
+                            >
+                                Sort
+                            </button>
                         </th>
                         <th
                             style={{
@@ -363,11 +405,24 @@ const GeoView2 = () => {
                             }}
                         >
                             Exhibitions
+                            <button
+                                onClick={() => handleSort('num_exhibitions')}
+                                style={{
+                                    marginLeft: '10px',
+                                    backgroundColor: '#ddd',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    padding: '5px',
+                                    color: '#0054a4',
+                                }}
+                            >
+                                Sort
+                            </button>
                         </th>
                     </tr>
                     </thead>
                     <tbody>
-                    {filteredData().map((entry, index) => (
+                    {sortedData.map((entry, index) => (
                         <tr key={index}>
                             <td
                                 style={{
@@ -388,9 +443,9 @@ const GeoView2 = () => {
                         </tr>
                     ))}
                     </tbody>
+
                 </table>
             </div>
-
             <button
                 style={{
                     marginTop: '20px',
