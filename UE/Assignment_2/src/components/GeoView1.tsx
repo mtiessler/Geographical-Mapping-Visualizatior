@@ -270,7 +270,6 @@ const GeoView1 = () => {
                 flexDirection: 'column',
                 alignItems: 'center',
                 minHeight: '100vh', // Allow scrolling for longer pages
-                background: 'linear-gradient(to top, #0054a4, #ffffff)', // Blue-to-white gradient
                 color: '#0054a4', // Blue text
                 fontFamily: 'Arial, sans-serif',
                 overflowY: 'auto', // Enable vertical scrolling for the page
