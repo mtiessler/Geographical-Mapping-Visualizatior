@@ -175,12 +175,21 @@ const ArtVisCollaborationNetwork: React.FC = () => {
                         (link.target as NodeDatum).id === d.id
                 );
 
-                const connectedNodeIds = new Set(
-                    connectedLinks.flatMap((link) => [
-                        (link.source as NodeDatum).id,
-                        (link.target as NodeDatum).id,
-                    ])
-                );
+                const connectedNodes = connectedLinks.map((link) => {
+                    const otherNodeId =
+                        (link.source as NodeDatum).id === d.id
+                            ? (link.target as NodeDatum).id
+                            : (link.source as NodeDatum).id;
+
+                    return nodes.find((node) => node.id === otherNodeId);
+                }).filter((node): node is NodeDatum => !!node);
+
+                const connectedNodeDetails = connectedNodes
+                    .map(
+                        (node) =>
+                            `${node.firstname || ''} ${node.lastname || ''} (${node.nationality || 'Unknown'})`
+                    )
+                    .join('<br/>');
 
                 linkSelection
                     .attr('stroke', (link) =>
@@ -193,17 +202,22 @@ const ArtVisCollaborationNetwork: React.FC = () => {
                 nodeGroups
                     .selectAll<SVGCircleElement, NodeDatum>('circle')
                     .attr('stroke', (node: NodeDatum) =>
-                        connectedNodeIds.has(node.id) ? '#ff9900' : '#fff'
+                        connectedNodes.find((n) => n.id === node.id) || d.id === node.id ? '#ff9900' : '#fff'
                     )
                     .attr('stroke-width', (node: NodeDatum) =>
-                        connectedNodeIds.has(node.id) ? 3 : 2
+                        connectedNodes.find((n) => n.id === node.id) || d.id === node.id ? 3 : 2
                     );
 
-                tooltip.style('visibility', 'visible').html(`
-      <strong>${d.firstname} ${d.lastname}</strong><br/>
-      Nationality: ${d.nationality}<br/>
-      Exhibitions: ${d.exhibitions_count || 0}
-    `);
+                tooltip
+                    .style('visibility', 'visible')
+                    .html(`
+                <strong>${d.firstname || ''} ${d.lastname || ''}</strong><br/>
+                Nationality: ${d.nationality || 'Unknown'}<br/>
+                Exhibitions: ${d.exhibitions_count || 0}<br/>
+                <hr/>
+                <strong>Connected to:</strong><br/>
+                ${connectedNodeDetails || 'None'}
+            `);
             })
             .on('mousemove', (event) => {
                 tooltip
@@ -222,7 +236,6 @@ const ArtVisCollaborationNetwork: React.FC = () => {
 
                 tooltip.style('visibility', 'hidden');
             });
-
         const legendG = svg
             .append('g')
             .attr('transform', `translate(${width - 150}, 50)`);
@@ -275,7 +288,6 @@ const ArtVisCollaborationNetwork: React.FC = () => {
                 justifyContent: 'center',
                 minHeight: '100vh',
                 padding: '20px',
-                background: 'linear-gradient(to top, #0054a4, #ffffff)',
             }}
         >
             <button
@@ -351,12 +363,18 @@ const ArtVisCollaborationNetwork: React.FC = () => {
                     pointerEvents: 'none',
                 }}
             ></div>
-            <div style={{ marginTop: '20px', width: '80%', color: '#ffffff' }}>
-                <label>
-                    Minimum Connection Weight: {minEdgeWeight}
-                    <input
-                        type="range"
-                        min="1"
+            <div
+                style={{
+                    marginTop: '20px', // Space above the slider
+                    width: '80%',
+                    textAlign: 'center',
+                    color: '#0054a4', // Blue text for the slider label
+                }}
+            ><label>
+                Minimum Connection Weight: {minEdgeWeight}
+                <input
+                    type="range"
+                    min="1"
                         max="100"
                         value={minEdgeWeight}
                         onChange={(e) => setMinEdgeWeight(parseInt(e.target.value, 10))}
