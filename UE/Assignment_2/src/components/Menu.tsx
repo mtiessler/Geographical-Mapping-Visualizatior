@@ -8,7 +8,7 @@ const Menu: React.FC = () => {
     return (
         <div className="menu-container">
             <header className="menu-header">
-                <img src={tuwienLogo} alt="TU Wien Logo" className="menu-logo" />
+                <img src={tuwienLogo} alt="TU Wien Logo" className="menu-logo"/>
                 <h1 className="menu-title">Assignment 2: Creating Interactive Visualizations</h1>
             </header>
             <div className="menu-buttons">
@@ -25,21 +25,21 @@ const Menu: React.FC = () => {
                     <button className="menu-button view4">Collaboration Network</button>
                 </Link>
             </div>
-            <div className="mt-5 menu-placeholders">
+            <div className="menu-placeholders mt-5">
                 <div className="placeholder-row">
-                    <p><strong>Name 1:</strong> Irene </p>
-                    <p><strong>Surname 1:</strong>Garcia Villoria</p>
-                    <p><strong>Matriculation 1:</strong> 12404282</p>
+                    <p className="name">Irene</p>
+                    <p className="surname">Garcia Villoria</p>
+                    <p className="matriculation"><strong>Matriculation Number:</strong> 12404282</p>
                 </div>
                 <div className="placeholder-row">
-                    <p><strong>Name 2:</strong>Max</p>
-                    <p><strong>Surname 2:</strong>Tiessler</p>
-                    <p><strong>Matriculation 2:</strong> 12234573</p>
+                    <p className="name">Max</p>
+                    <p className="surname">Tiessler</p>
+                    <p className="matriculation"><strong>Matriculation Number:</strong> 12234573</p>
                 </div>
                 <div className="placeholder-row">
-                    <p><strong>Name 3:</strong>Dennis</p>
-                    <p><strong>Surname 3:</strong>Toma</p>
-                    <p><strong>Matriculation 3:</strong>12329504</p>
+                    <p className="name">Dennis</p>
+                    <p className="surname">Toma</p>
+                    <p className="matriculation"><strong>Matriculation Number:</strong> 12329504</p>
                 </div>
             </div>
         </div>
