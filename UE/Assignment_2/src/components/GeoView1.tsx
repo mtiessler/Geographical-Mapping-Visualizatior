@@ -305,17 +305,18 @@ const GeoView1 = () => {
             </button>
 
             {/* Title */}
-            <h1 style={{ color: '#0054a4' }}>Geographical Heatmap of Exhibitions</h1>
-            <p style={{ maxWidth: '600px', textAlign: 'center', margin: '10px 0', color: '#0054a4' }}>
+            <h1 style={{color: '#0054a4'}}>Geographical Heatmap of Exhibitions</h1>
+            <p style={{maxWidth: '600px', textAlign: 'center', margin: '10px 0', color: '#0054a4'}}>
                 This map visualizes the number of exhibitions held in various countries between 1902 and 1915.
                 You are currently viewing data for <strong>{year}</strong>
                 {importantDates.some((date) => date.year === year) && (
-                    <span style={{ color: 'red', fontWeight: 'bold' }}>
+                    <span style={{color: 'red', fontWeight: 'bold'}}>
                         {' '}
                         ({importantDates.find((date) => date.year === year)?.description})
                     </span>
                 )}
-                . Use the sliders below to explore the data for different years and set the minimum number of exhibitions
+                . Use the sliders below to explore the data for different years and set the minimum number of
+                exhibitions
                 required to display a country.
             </p>
 
@@ -337,13 +338,13 @@ const GeoView1 = () => {
                     ref={svgRef}
                     width="100%"
                     height="500px"
-                    style={{ border: '1px solid #ccc', maxWidth: '700px' }}
+                    style={{border: '1px solid #ccc', maxWidth: '700px'}}
                 ></svg>
                 <svg
                     ref={legendRef}
                     width={100}
                     height={350}
-                    style={{ marginLeft: '10px' }}
+                    style={{marginLeft: '10px'}}
                 ></svg>
             </div>
 
@@ -366,12 +367,13 @@ const GeoView1 = () => {
             <div
                 style={{
                     display: 'flex',
-                    justifyContent: 'space-around',
+                    justifyContent: 'center', // Center the sliders
+                    gap: '20px', // Add a smaller gap between the sliders
                     width: '100%',
                     marginTop: '20px',
                 }}
             >
-                <div style={{ textAlign: 'center', color: '#0054a4' }}>
+                <div style={{textAlign: 'center', color: '#0054a4'}}>
                     <input
                         type="range"
                         min="1902"
@@ -384,9 +386,9 @@ const GeoView1 = () => {
                             accentColor: '#0054a4', // TU Wien blue slider thumb
                         }}
                     />
-                    <p style={{ marginTop: '10px', fontWeight: 'bold' }}>Year: {year}</p>
+                    <p style={{marginTop: '10px', fontWeight: 'bold'}}>Year: {year}</p>
                 </div>
-                <div style={{ textAlign: 'center', color: '#0054a4' }}>
+                <div style={{textAlign: 'center', color: '#0054a4'}}>
                     <input
                         type="range"
                         min="1"
@@ -401,7 +403,7 @@ const GeoView1 = () => {
                             accentColor: '#0054a4', // TU Wien blue slider thumb
                         }}
                     />
-                    <p style={{ marginTop: '10px', fontWeight: 'bold' }}>
+                    <p style={{marginTop: '10px', fontWeight: 'bold'}}>
                         Minimum Exhibitions: {minExhibitions}
                     </p>
                 </div>
@@ -411,8 +413,9 @@ const GeoView1 = () => {
             <div
                 style={{
                     marginTop: '20px',
-                    width: '90%', // Make the table wider
-                    maxHeight: '400px', // Increase table height
+                    width: '80%', // Make the table's container less wide
+                    maxWidth: '600px', // Set a maximum width for the table
+                    margin: '0 auto', // Center the table horizontally
                     overflowY: 'auto', // Enable scrolling for table content
                     border: '1px solid #ccc',
                     borderRadius: '8px',
@@ -429,7 +432,7 @@ const GeoView1 = () => {
                     }}
                 >
                     <thead>
-                    <tr style={{ backgroundColor: '#f2f2f2', color: '#0054a4' }}>
+                    <tr style={{backgroundColor: '#f2f2f2', color: '#0054a4'}}>
                         <th
                             style={{
                                 padding: '10px',
