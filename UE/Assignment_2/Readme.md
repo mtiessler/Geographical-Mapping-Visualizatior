@@ -1,6 +1,6 @@
-# React App with Docker and CI/CD
+# Assignment 2: Creating Interactive Visualizations
 
-This project is a React application that uses **TypeScript**, **SCSS** for styling, and **React Router** for navigation. The application has a main menu and four views. It supports running locally or using Docker, and includes a CI/CD pipeline for deployment to AWS Amplify and Docker Hub.
+This project is a React application that uses **TypeScript**, **SCSS** for styling, and **React Router** for navigation. The application includes interactive visualizations such as the **Artist Collaboration Network** and geospatial views. It supports running locally or using Docker and includes a CI/CD pipeline for deployment to AWS Amplify and Docker Hub.
 
 ---
 
@@ -11,6 +11,7 @@ This project is a React application that uses **TypeScript**, **SCSS** for styli
 3. [Running via Docker](#running-via-docker)
 4. [CI/CD Pipeline](#cicd-pipeline)
 5. [Folder Structure](#folder-structure)
+6. [Views Overview](#views-overview)
 
 ---
 
@@ -55,7 +56,7 @@ The app will be available at `http://localhost:3000`.
 To build the Docker image:
 
 ```bash
-docker build -t react-app .
+docker build -t iv-assig2 .
 ```
 
 ### Run Docker Container
@@ -63,7 +64,7 @@ docker build -t react-app .
 Run the container exposing it on port 3000:
 
 ```bash
-docker run -p 3000:3000 react-app
+docker run -p 3000:3000 iv-assig2
 ```
 
 The app will be accessible at `http://localhost:3000`.
@@ -82,13 +83,10 @@ The project includes a **GitHub Actions** CI/CD pipeline for:
 1. Add the following **secrets** in your GitHub repository settings:
     - `DOCKER_USERNAME`: Your Docker Hub username.
     - `DOCKER_PASSWORD`: Your Docker Hub password or access token.
-    - `AWS_AMPLIFY_APP_ID`: Your AWS Amplify App ID.
-    - `AWS_REGION`: AWS Region (e.g., `us-east-1`).
-    - `AWS_ACCESS_KEY_ID`: AWS access key.
-    - `AWS_SECRET_ACCESS_KEY`: AWS secret key.
 
 2. Push to the `master` branch to trigger the CI/CD pipeline.
 
+3. The AWS Amplify CI/CD has been set up via AWS UI, using the `amplify.yml` file for configuration
 ---
 
 ## Folder Structure
@@ -110,7 +108,10 @@ react-app/
 │   ├── data/             # Data files (e.g., CSV)
 │   ├── styles/           # SCSS stylesheets
 │   ├── App.tsx           # Main App component
-│   └── index.tsx         # React entry point
+│   ├── assets/           # Assets folder
+│   ├── App.tsx           # Main App component
+│   ├── App.tsx           # React index file
+│   └── types/            # React custom types
 │
 ├── Dockerfile            # Dockerfile for building the app
 ├── .github/              # CI/CD workflows
@@ -119,6 +120,9 @@ react-app/
 │
 ├── tsconfig.json         # TypeScript configuration
 ├── package.json          # Project dependencies
+├── amplify.yml           # Amplify ci/cd yml
 ├── .gitignore            # Files to ignore in Git
 └── README.md             # Project documentation
+
+
 ```
