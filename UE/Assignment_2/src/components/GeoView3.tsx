@@ -52,6 +52,10 @@ const GeoView3: React.FC = () => {
     const [filteredData, setFilteredData] = useState<Record<string, CountryData[]> | null>(null);
     const [artists, setArtists] = useState<string[]>([]);
     const [years, setYears] = useState<string[]>([]);
+    const [sortConfig, setSortConfig] = useState<{
+        key: 'country' | 'num_exhibitions';
+        direction: 'asc' | 'desc';
+    } | null>(null);
 
     const fetchWorldMap = async (): Promise<any> => {
         try {
@@ -62,6 +66,16 @@ const GeoView3: React.FC = () => {
             console.error('Error fetching world map:', error);
             return null;
         }
+    };
+    useEffect(() => {
+        setSortConfig(null);
+    }, [selectedArtist]);
+    const handleSort = (key: 'country' | 'num_exhibitions') => {
+        let direction: 'asc' | 'desc' = 'asc';
+        if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
+            direction = 'desc';
+        }
+        setSortConfig({ key, direction });
     };
 
     const fetchData = async (): Promise<void> => {
@@ -75,6 +89,26 @@ const GeoView3: React.FC = () => {
             console.error('Error fetching data:', error);
         }
     };
+
+    const sortedData = React.useMemo(() => {
+        if (!filteredData) return [];
+        const rows = Object.values(filteredData).flatMap((yearData) => yearData);
+
+        if (!sortConfig) return rows;
+
+        return rows.sort((a, b) => {
+            if (sortConfig.key === 'country') {
+                return sortConfig.direction === 'asc'
+                    ? a['e.country'].localeCompare(b['e.country'])
+                    : b['e.country'].localeCompare(a['e.country']);
+            } else if (sortConfig.key === 'num_exhibitions') {
+                return sortConfig.direction === 'asc'
+                    ? a.num_exhibitions - b.num_exhibitions
+                    : b.num_exhibitions - a.num_exhibitions;
+            }
+            return 0;
+        });
+    }, [filteredData, sortConfig]);
 
     const filterByArtist = (artist: string | null): void => {
         if (!artist || !data || !data[artist]) {
@@ -178,8 +212,18 @@ const GeoView3: React.FC = () => {
 
         const colorScale = d3.scaleSequentialLog(d3.interpolateReds).domain([1, maxExhibitions]);
 
-        svg.append('g')
-            .selectAll('path')
+        const g = svg.append('g');
+
+        const zoom = d3.zoom<SVGSVGElement, unknown>()
+            .scaleExtent([1, 8])
+            .translateExtent([[0, 0], [width, height]])
+            .on('zoom', (event) => {
+                g.attr('transform', event.transform);
+            });
+
+        svg.call(zoom);
+
+        g.selectAll('path')
             .data(geoJSON.features)
             .enter()
             .append('path')
@@ -280,7 +324,6 @@ const GeoView3: React.FC = () => {
                 flexDirection: 'column',
                 alignItems: 'center',
                 minHeight: '100vh',
-                background: 'linear-gradient(to top, #0054a4, #ffffff)',
                 color: '#0054a4',
                 fontFamily: 'Arial, sans-serif',
                 overflowY: 'auto',
@@ -366,11 +409,10 @@ const GeoView3: React.FC = () => {
             </div>
             <div
                 style={{
-                    marginTop: '20px',
-                    width: '80%',
+                    marginTop: '10px',
+                    width: '100%',
+                    maxWidth: '700px',
                     textAlign: 'center',
-                    fontSize: '14px',
-                    fontWeight: 'bold',
                 }}
             >
                 <input
@@ -385,7 +427,9 @@ const GeoView3: React.FC = () => {
                         accentColor: '#0054a4',
                     }}
                 />
-                <p>Year: {selectedYear || 'Select Year'}</p>
+                <p style={{ marginTop: '10px', color: '#0054a4' }}>
+                    Year: {selectedYear || 'Select Year'}
+                </p>
             </div>
             <div
                 ref={tooltipRef}
@@ -404,8 +448,9 @@ const GeoView3: React.FC = () => {
                 <div
                     style={{
                         marginTop: '20px',
-                        width: '90%',
-                        maxHeight: '400px',
+                        width: '80%',
+                        maxWidth: '600px',
+                        margin: '0 auto',
                         overflowY: 'auto',
                         border: '1px solid #ccc',
                         borderRadius: '8px',
@@ -423,31 +468,63 @@ const GeoView3: React.FC = () => {
                     >
                         <thead>
                         <tr style={{ backgroundColor: '#f2f2f2', color: '#0054a4' }}>
-                            <th style={{ padding: '10px', border: '1px solid #ddd' }}>Country</th>
-                            <th style={{ padding: '10px', border: '1px solid #ddd' }}>ISO-3</th>
-                            <th style={{ padding: '10px', border: '1px solid #ddd' }}>Year</th>
-                            <th style={{ padding: '10px', border: '1px solid #ddd' }}>Exhibitions</th>
+                            <th style={{ padding: '10px', border: '1px solid #ddd' }}>
+                                Country
+                                <button
+                                    onClick={() => handleSort('country')}
+                                    style={{
+                                        marginLeft: '10px',
+                                        backgroundColor: '#ddd',
+                                        border: 'none',
+                                        cursor: 'pointer',
+                                        padding: '5px',
+                                        color: '#0054a4',
+                                    }}
+                                >
+                                    Sort
+                                </button>
+                            </th>
+                            <th style={{ padding: '10px', border: '1px solid #ddd' }}>
+                                ISO-3
+                            </th>
+                            <th style={{ padding: '10px', border: '1px solid #ddd' }}>
+                                Year
+                            </th>
+                            <th style={{ padding: '10px', border: '1px solid #ddd' }}>
+                                Exhibitions
+                                <button
+                                    onClick={() => handleSort('num_exhibitions')}
+                                    style={{
+                                        marginLeft: '10px',
+                                        backgroundColor: '#ddd',
+                                        border: 'none',
+                                        cursor: 'pointer',
+                                        padding: '5px',
+                                        color: '#0054a4',
+                                    }}
+                                >
+                                    Sort
+                                </button>
+                            </th>
                         </tr>
                         </thead>
                         <tbody>
-                        {Object.values(filteredData).flatMap((yearData) =>
-                            yearData.map((row, index) => (
-                                <tr key={index}>
-                                    <td style={{ padding: '10px', border: '1px solid #ddd' }}>
-                                        {row['e.country']}
-                                    </td>
-                                    <td style={{ padding: '10px', border: '1px solid #ddd' }}>
-                                        {row['e.country_3']}
-                                    </td>
-                                    <td style={{ padding: '10px', border: '1px solid #ddd' }}>
-                                        {row.year}
-                                    </td>
-                                    <td style={{ padding: '10px', border: '1px solid #ddd' }}>
-                                        {row.num_exhibitions}
-                                    </td>
-                                </tr>
-                            ))
-                        )}
+                        {sortedData.map((row, index) => (
+                            <tr key={index}>
+                                <td style={{ padding: '10px', border: '1px solid #ddd' }}>
+                                    {row['e.country']}
+                                </td>
+                                <td style={{ padding: '10px', border: '1px solid #ddd' }}>
+                                    {row['e.country_3']}
+                                </td>
+                                <td style={{ padding: '10px', border: '1px solid #ddd' }}>
+                                    {row.year}
+                                </td>
+                                <td style={{ padding: '10px', border: '1px solid #ddd' }}>
+                                    {row.num_exhibitions}
+                                </td>
+                            </tr>
+                        ))}
                         </tbody>
                     </table>
                 </div>
