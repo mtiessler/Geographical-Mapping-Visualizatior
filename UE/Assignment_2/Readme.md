@@ -30,8 +30,8 @@ Ensure the following are installed on your system:
 Clone the repository and install project dependencies:
 
 ```bash
-git clone <repository-url>
-cd react-app
+git clone <https://github.com/mtiessler/IV-Geographical-Mapping-Visualizator>
+cd UE/Assignment_2
 npm install
 ```
 
@@ -51,32 +51,19 @@ The app will be available at `http://localhost:3000`.
 
 ## Running via Docker
 
-### Build Docker Image
+### Using Docker Compose
 
-To build the Docker image:
+To run the application with Docker Compose:
 
+1. Build and start the container using `docker-compose`:
 ```bash
-docker build -t iv-assig2 .
+   docker-compose up --build
 ```
-
-### Run Docker Container
-
-Run the container exposing it on port 3000:
-
-```bash
-docker run -p 3000:3000 iv-assig2
-```
-
-The app will be accessible at `http://localhost:3000`.
-
----
+The app will be accessible at `http://localhost:8000`
 
 ## CI/CD Pipeline
 
-The project includes a **GitHub Actions** CI/CD pipeline for:
-
-1. Building and pushing the Docker image to **Docker Hub**.
-2. Deploying the application to **AWS Amplify**.
+The project includes a **GitHub Actions** CI/CD pipeline for building and pushing the Docker image to **Docker Hub**.
 
 ### Setting Up CI/CD
 
